@@ -1,0 +1,27 @@
+{
+    "graph": [
+        {"id": "entrance", "north": {"node": "corridor1"}},
+        {"id": "corridor1", "south": {"node": "entrance"}, "east": {"node": "store1"}},
+        {"id": "store1", "west": {"node": "corridor1"}}
+    ],
+    "rooms": {
+        "entrance": {
+            "title": "Reading Room",
+            "description": "You are standing in a reading room. There are some desks and chairs on soft carpeted floor. There is a leaflet on the counter. There is a door behind a counter to the North.",
+            "items": [
+                {"id": "leaflet", "name": "Leaflet", "description": "Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present."}
+            ]
+        },
+        "corridor1": {
+            "title": "Corridor",
+            "description": "What a corridor. There are doors to the South and the East."
+        },
+        "store1": {
+            "title": "Store 1",
+            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 red shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system."
+        }
+    },
+    "messages": {
+        "cantGoThatWay": ["You can't go in that direction"]
+    }
+}

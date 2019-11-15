@@ -1,0 +1,50 @@
+.game {
+    max-width: 40rem;
+    border: 1px solid red;
+    font-family: "Arial";
+}
+.game--controls {
+    display: flex;
+}
+
+.controls--field {
+    display: block;
+    flex-basis: 90%;
+    padding: .5rem 1rem;
+    border: 0;
+    color: red;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.controls--button {
+    flex-grow: 1;
+    background: none;
+    border: 0;
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+
+.game--status {
+    padding: .5rem 1rem;
+    font-weight: bold;
+    color: white;
+    background: red;
+}
+.game--output {
+    height: 30rem;
+    border-bottom: 1px solid red;
+    color: red;
+    padding: 1rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    overflow-y: scroll;
+}
+
+.game--output li {
+    display: block;
+    list-style: none;
+    transform-origin: left;
+    transform: scaleX(.9);
+}
