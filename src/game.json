@@ -1,27 +1,211 @@
 {
+    "inventory": [
+        {
+            "id": "keycard",
+            "name": "Keycard",
+            "description": "Plastic."
+        }
+    ],
     "graph": [
-        {"id": "entrance", "north": {"node": "corridor1"}},
-        {"id": "corridor1", "south": {"node": "entrance"}, "east": {"node": "store1"}},
-        {"id": "store1", "west": {"node": "corridor1"}}
+        {
+            "id": "entrance",
+            "north": {
+                "node": "corridor1"
+            }
+        },
+        {
+            "id": "corridor1",
+            "south": {
+                "node": "entrance"
+            },
+            "east": {
+                "node": "store1"
+            }
+        },
+        {
+            "id": "store1",
+            "west": {
+                "node": "corridor1"
+            }
+        }
     ],
     "rooms": {
         "entrance": {
             "title": "Reading Room",
-            "description": "You are standing in a reading room. There are some desks and chairs on soft carpeted floor. There is a leaflet on the counter. There is a door behind a counter to the North.",
+            "description": "You are standing in a reading room. There are some desks and chairs on soft carpeted floor, tall shelves line the walls. There is a door behind a counter to the North.",
             "items": [
-                {"id": "leaflet", "name": "Leaflet", "description": "Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present."}
+                {
+                    "canTake": true,
+                    "id": "leaflet",
+                    "name": "Leaflet",
+                    "description": "\"Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.\""
+                },
+                {
+                    "id": "desk",
+                    "name": "Desk",
+                    "canTake": false,
+                    "description": "They are hardwood desks of massive construction with a leather writing surface laid into the top."
+                },
+                {
+                    "id": "chair",
+                    "name": "Chair",
+                    "canTake": false,
+                    "description": "The chairs are made of polished steel and soft black leather. Very heavy."
+                },
+                {
+                    "id": "counter",
+                    "name": "Counter",
+                    "canTake": false,
+                    "description": "The counter is chest-high, with dark-grey linoleum sides and an oak top. Leaflets are stacked in one corner."
+                },
+                {
+                    "id": "shelves",
+                    "name": "Shelves",
+                    "canTake": false,
+                    "description": "The shelves reach from floor to ceiling. They are filled with green binders."
+                },
+                {
+                    "id": "floor",
+                    "name": "Floor",
+                    "canTake": false,
+                    "description": "The light-grey carpet is so dense you can barely hear your own footsteps."
+                }
             ]
         },
         "corridor1": {
             "title": "Corridor",
-            "description": "What a corridor. There are doors to the South and the East."
+            "description": "You are in a wide corridor. To your left is a desk covered in stationery. There is a door in the wire mesh wall to the East.",
+            "items": [
+                {
+                    "canTake": false,
+                    "id": "desk",
+                    "description": "It's made of steel."
+                },
+                {
+                    "canTake": false,
+                    "id": "floor",
+                    "description": "Light-grey linoleum."
+                },
+                {
+                    "canTake": false,
+                    "id": "door",
+                    "description": "It's made of the same wire mesh as the wall. A card reader is attached to the wall next to it."
+                },
+                {
+                    "canTake": false,
+                    "id": "cardreader",
+                    "description": "\"Swipe here.\""
+                }
+            ],
+            "doors": {}
         },
         "store1": {
             "title": "Store 1",
-            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 red shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system."
+            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system.",
+            "items": [
+                {
+                    "canTake": false,
+                    "id": "shelves",
+                    "description": "They look heavy.",
+                    "shelves": [
+                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 123\"."},
+                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 124\"."},
+                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 125\"."},
+                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 126\"."},
+                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 127\"."},
+                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 128\"."}
+                    ]
+                },
+                {
+                    "canTake": false,
+                    "id": "floor",
+                    "descriprion": "Unremarkable."
+                },
+                {
+                    "canTake": false,
+                    "id": "tracks",
+                    "descriprion": "Steel, polished to a high sheen by repeated use."
+                }
+            ]
         }
     },
+    "initialInventory": [
+        {"id": "accesscard", "name": "Access Card"},
+        {"id": "wallet", "name": "Wallet"},
+        {"id": "keys", "name": "Keys"}
+    ],
     "messages": {
-        "cantGoThatWay": ["You can't go in that direction"]
-    }
+        "cantGoThatWay": [
+            "You can't go in that direction",
+            "You can't go that way."
+        ],
+        "cantTakeThat": [
+            "You can't take that.",
+            "Better to leave that there.",
+            "A bit too bulky.",
+            "You shouldn't take that.",
+            "Better to leave that where it is."
+        ],
+        "didntUnderstand": [
+            "I didn't understand that.",
+            "That's not a word I know."
+        ],
+        "noSuchThing": [
+            "There is no such thing here."
+        ]
+    },
+    "synonyms": [
+        {
+            "term": "west",
+            "match": [
+                "w",
+                "left"
+            ]
+        },
+        {
+            "term": "east",
+            "match": [
+                "e",
+                "right"
+            ]
+        },
+        {
+            "term": "north",
+            "match": [
+                "n"
+            ]
+        },
+        {
+            "term": "south",
+            "match": [
+                "s"
+            ]
+        },
+        {
+            "term": "inventory",
+            "match": [
+                "i",
+                "bag",
+                "items",
+                "pocket"
+            ]
+        },
+        {
+            "term": "take",
+            "match": [
+                "grab",
+                "pick",
+                "pickup",
+                "get"
+            ]
+        },
+        {
+            "term": "examine",
+            "match": [
+                "look",
+                "lookat",
+                "view"
+            ]
+        }
+    ]
 }
