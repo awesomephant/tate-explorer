@@ -1,20 +1,8 @@
 import React from 'react'
 import game from './game.json'
 import util from './util.js'
+import Map from './Map.js'
 import './Game.css'
-
-function fillStores(){
-    for (let i = 0; i < 14; i++){
-        game.graph.push({
-            id: `store1-shelf${i+1}`,
-            back: {node: 'store1'},
-            west: {node: 'corridor1'}
-        })
-    }
-    console.dir(game.graph)
-}
-
-fillStores()
 
 export default class Game extends React.Component {
     constructor(props) {
@@ -23,6 +11,7 @@ export default class Game extends React.Component {
             input: '',
             prevInput: '',
             currentRoom: 'entrance',
+            visitedRooms: [],
             outputs: [],
             inventory: game.initialInventory
         }
@@ -40,6 +29,32 @@ export default class Game extends React.Component {
     componentDidMount() {
         this.inputRef.current.focus();
         this.addOutput('You are the archivist. Find TGA431.')
+        this.fillStores()
+    }
+
+    getGraphIndexByID(id){
+        for (let i = 0; i < game.graph.length; i++){
+            if (game.graph[i].id === id){
+                return i;
+            }
+        }
+        return null;
+    }
+
+
+    fillStores() {
+        const shelfCount = 10;
+        const graphIndex = this.getGraphIndexByID('store1')
+
+        for (let i = 0; i < shelfCount; i++) {
+            let shelfID = `store1-shelf${i + 1}`;
+            game.graph[graphIndex][`shelf-${i + 1}`] = { node: shelfID }
+            game.graph.push({
+                id: shelfID,
+                back: { node: 'store1' },
+                west: { node: 'corridor1' }
+            })
+        }
     }
 
     getNodeByID(id) {
@@ -152,7 +167,7 @@ export default class Game extends React.Component {
             if (item && item.canTake) {
                 this.addOutput('Taken.')
                 this.addToInventory(item)
-            } if (item && !item.canTake){
+            } if (item && !item.canTake) {
                 this.addOutput(this.getMessage('cantTakeThat'))
             } else {
                 this.addOutput(this.getMessage('noSuchThing'))
@@ -172,7 +187,7 @@ export default class Game extends React.Component {
                 }
             } else if (noun === 'around') {
                 this.addOutput(game.rooms[this.state.currentRoom].description)
-            } else if (noun === 'shelf' && this.getItemByID('shelves')){
+            } else if (noun === 'shelf' && this.getItemByID('shelves')) {
                 let item = this.getItemByID('shelves')
                 let index = command[2];
                 this.addOutput(item.shelves[index].description)
@@ -208,7 +223,9 @@ export default class Game extends React.Component {
                     <input ref={this.inputRef} onKeyPress={this.detectSubmit} value={this.state.input} onChange={this.handleChange} className='controls--field'></input>
                     <button onClick={this.handleInput} className='controls--button'>Enter</button>
                 </div>
+                <Map graph={game.graph}></Map>
             </div>
+
         )
     }
 

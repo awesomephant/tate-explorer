@@ -1,0 +1,11 @@
+.map {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    bottom: 4rem;
+    right: 4rem;
+}
+
+.map canvas {
+    border: 1px solid blue;
+}
