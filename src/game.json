@@ -26,6 +26,57 @@
             "id": "store1",
             "west": {
                 "node": "corridor1"
+            },
+            "south": {
+                "node": "store2"
+            }
+        },
+        {
+            "id": "store2",
+            "north": {
+                "node": "store1"
+            },
+            "south": {
+                "node": "store3"
+            }
+        },
+        {
+            "id": "store3",
+            "north": {
+                "node": "store2"
+            },
+            "south": {
+                "node": "corridor2"
+            },
+            "east": {
+                "node": "quarantine"
+            }
+        },
+        {
+            "id": "corridor2",
+            "north": {
+                "node": "store3"
+            },
+            "east": {
+                "node": "loadingDock"
+            }
+        },
+        {
+            "id": "loadingDock",
+            "north": {
+                "node": "quarantine"
+            },
+            "west": {
+                "node": "corridor2"
+            }
+        },
+        {
+            "id": "quarantine",
+            "west": {
+                "node": "store3"
+            },
+            "south": {
+                "node": "loadingDock"
             }
         }
     ],
@@ -38,7 +89,7 @@
                     "canTake": true,
                     "id": "leaflet",
                     "name": "Leaflet",
-                    "description": "\"Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.\""
+                    "description": "The leaflet reads: \"Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.\""
                 },
                 {
                     "id": "desk",
@@ -74,12 +125,34 @@
         },
         "corridor1": {
             "title": "Corridor",
-            "description": "You are in a wide corridor. To your left is a desk covered in stationery. There is a door in the wire mesh wall to the East.",
+            "description": "You are in a brightly-lit corridor. You see a narrow desk to one side. The walls on either side are made of steel wire mesh painted white, beyond which rows of storage shelves are visible. There is a door to the East.",
             "items": [
                 {
                     "canTake": false,
                     "id": "desk",
-                    "description": "It's made of steel."
+                    "examined": false,
+                    "description": "Utilitarian. Empty boxes, stacks of documents, paper files, various stationary, and a single blue rubber glove are scattered across the surface.",
+                    "searchDescription": "You search the desk. After a little while, you find an access card under a stack of acquisition forms.",
+                    "visibleItems": [
+                        {
+                            "canTake": true,
+                            "id": "glove",
+                            "name": "Blue rubber glove",
+                            "description": "Looks unused (thank god)."
+                        }
+                    ],
+                    "hiddenItems": [
+                        {
+                            "canTake": true,
+                            "triggers": [
+                                "card",
+                                "keycard",
+                                "access card"
+                            ],
+                            "id": "card",
+                            "description": "asdsads"
+                        }
+                    ]
                 },
                 {
                     "canTake": false,
@@ -89,15 +162,17 @@
                 {
                     "canTake": false,
                     "id": "door",
-                    "description": "It's made of the same wire mesh as the wall. A card reader is attached to the wall next to it."
-                },
-                {
-                    "canTake": false,
-                    "id": "cardreader",
-                    "description": "\"Swipe here.\""
+                    "description": "It's made of the same steel wire mesh as the walls, with solid steel hinges. A card reader is attached to the wall next to it.",
+                    "visibleItems": [
+                        {
+                            "canTake": false,
+                            "name": "Card Reader",
+                            "id": "cardreader",
+                            "description": "\"Swipe here.\""
+                        }
+                    ]
                 }
-            ],
-            "doors": {}
+            ]
         },
         "store1": {
             "title": "Store 1",
@@ -108,12 +183,24 @@
                     "id": "shelves",
                     "description": "They look heavy.",
                     "shelves": [
-                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 123\"."},
-                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 124\"."},
-                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 125\"."},
-                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 126\"."},
-                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 127\"."},
-                        {"description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 128\"."}
+                        {
+                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 123\"."
+                        },
+                        {
+                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 124\"."
+                        },
+                        {
+                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 125\"."
+                        },
+                        {
+                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 126\"."
+                        },
+                        {
+                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 127\"."
+                        },
+                        {
+                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 128\"."
+                        }
                     ]
                 },
                 {
@@ -125,16 +212,59 @@
                     "canTake": false,
                     "id": "tracks",
                     "descriprion": "Steel, polished to a high sheen by repeated use."
+                },
+                {
+                    "id": "box",
+                    "canTake": true,
+                    "descriprion": "You pick up a random box from the shelf. Opening it reveals a stack of neat paper files."
                 }
             ]
+        },
+        "store2": {
+            "title":"Store 2",
+            "description": "it's a store"
+        },
+        "store3": {
+            "title":"Store 3",
+            "description": "it's a store 3"
+        },
+        "quarantine": {
+            "title":"Quarantine",
+            "description": "it's le quarantine zone"
+        },
+        "corridor2": {
+            "title":"South Corridor",
+            "description": "wahey a corridor"
+        },
+        "loadingDock": {
+            "title":"Loading Dock",
+            "description": "such loading"
         }
     },
     "initialInventory": [
-        {"id": "accesscard", "name": "Access Card"},
-        {"id": "wallet", "name": "Wallet"},
-        {"id": "keys", "name": "Keys"}
+        {
+            "id": "accesscard",
+            "name": "Access Card",
+            "description": "Plastic. You look dead in the picture."
+        },
+        {
+            "id": "wallet",
+            "name": "Wallet",
+            "description": "Light."
+        },
+        {
+            "id": "keys",
+            "name": "Keys",
+            "description": "Dangly."
+        }
     ],
     "messages": {
+        "init": [
+            "You are the archivist. Find TGA431. Start by looking around the room, or type \"help\" to show a list of available commands."
+        ],
+        "help": [
+            "You can interact with the world by typing commands in the format \"[verb]\" or \"[verb] [noun]\". Common verbs include \"go\", \"take\", \"look\", \"examine\", and \"use\". To move around, type \"go\" followed by a compass direction like this: \"go north\". Type \"Inventory\" to see what you're carrying, and \"help\" to display this message."
+        ],
         "cantGoThatWay": [
             "You can't go in that direction",
             "You can't go that way."
@@ -152,6 +282,9 @@
         ],
         "noSuchThing": [
             "There is no such thing here."
+        ],
+        "searchFailed": [
+            "You don't find anything."
         ]
     },
     "synonyms": [

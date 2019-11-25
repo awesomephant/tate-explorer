@@ -1,14 +1,15 @@
 import React from 'react'
 import game from './game.json'
+import catalogue from './catalogue.json'
 import util from './util.js'
 import './Game.css'
 
-function fillStores(){
-    for (let i = 0; i < 14; i++){
+function fillStores() {
+    for (let i = 0; i < 14; i++) {
         game.graph.push({
-            id: `store1-shelf${i+1}`,
-            back: {node: 'store1'},
-            west: {node: 'corridor1'}
+            id: `store1-shelf${i + 1}`,
+            back: { node: 'store1' },
+            west: { node: 'corridor1' }
         })
     }
     console.dir(game.graph)
@@ -39,7 +40,7 @@ export default class Game extends React.Component {
 
     componentDidMount() {
         this.inputRef.current.focus();
-        this.addOutput('You are the archivist. Find TGA431.')
+        this.addOutput(this.getMessage('init'))
     }
 
     getNodeByID(id) {
@@ -51,8 +52,26 @@ export default class Game extends React.Component {
 
     getItemByID(id) {
         for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
-            if (game.rooms[this.state.currentRoom].items[i].id === id) {
-                return game.rooms[this.state.currentRoom].items[i]
+            let item = game.rooms[this.state.currentRoom].items[i];
+            if (item.id === id) {
+                game.rooms[this.state.currentRoom].items[i].examined = true;
+                return item
+            }
+            if (item.examined && item.visibleItems) {
+                for (let j = 0; j < item.visibleItems.length; j++) {
+                    let vi = item.visibleItems[j];
+                    if (vi.id === id) {
+                        return vi;
+                    }
+                }
+            }
+            if (item.searched && item.hiddenItems) {
+                for (let j = 0; j < item.hiddenItems.length; j++) {
+                    let hi = item.hiddenItems[j];
+                    if (hi.id === id) {
+                        return hi;
+                    }
+                }
             }
         }
         for (let i = 0; i < this.state.inventory.length; i++) {
@@ -115,7 +134,8 @@ export default class Game extends React.Component {
 
     handleInput() {
         this.setState({ prevInput: this.state.input })
-        let command = this.state.input.split(' ')
+        let s = this.state.input.replace('at ', '')
+        let command = s.split(' ')
 
         let verb = this.resolveSynonyms(command[0]);
         let noun = this.resolveSynonyms(command[1]);
@@ -132,6 +152,9 @@ export default class Game extends React.Component {
                 verb = 'go'
             } else if (noun === 'inventory') {
                 verb = 'examine'
+            } else if (noun === 'help') {
+                this.addOutput(this.getMessage('help'))
+                return;
             }
         }
 
@@ -143,8 +166,14 @@ export default class Game extends React.Component {
                     prevState.currentRoom = nextRoom;
                     return prevState;
                 })
-                this.addOutput(game.rooms[nextRoom].description)
-            } else {
+                if (!game.rooms[nextRoom].visited) {
+                    this.addOutput(game.rooms[nextRoom].description)
+                    game.rooms[nextRoom].visited = true;
+                } else if (game.rooms[nextRoom].visited === true) {
+                    this.addOutput(game.rooms[nextRoom].title)
+                }
+            }
+            else {
                 this.addOutput(game.messages.cantGoThatWay[0])
             }
         } else if (verb === 'take') {
@@ -152,9 +181,9 @@ export default class Game extends React.Component {
             if (item && item.canTake) {
                 this.addOutput('Taken.')
                 this.addToInventory(item)
-            } if (item && !item.canTake){
+            } else if (item && !item.canTake) {
                 this.addOutput(this.getMessage('cantTakeThat'))
-            } else {
+            } else if (!item) {
                 this.addOutput(this.getMessage('noSuchThing'))
             }
         } else if (verb === 'examine') {
@@ -172,19 +201,29 @@ export default class Game extends React.Component {
                 }
             } else if (noun === 'around') {
                 this.addOutput(game.rooms[this.state.currentRoom].description)
-            } else if (noun === 'shelf' && this.getItemByID('shelves')){
+            } else if (noun === 'shelf' && this.getItemByID('shelves')) {
                 let item = this.getItemByID('shelves')
                 let index = command[2];
                 this.addOutput(item.shelves[index].description)
             } else {
                 let item = this.getItemByID(noun)
-                console.log(item)
                 if (item) {
                     this.addOutput(item.description)
                 } else {
                     this.addOutput(this.getMessage('noSuchThing'))
                 }
             }
+        } else if (verb === 'search') {
+            let item = this.getItemByID(noun)
+            if (item.hiddenItems) {
+                item.searched = true;
+                this.addOutput(item.searchDescription);
+            } else {
+                item.searched = true;
+                this.addOutput(this.getMessage('searchFailed'))
+            }
+        } else {
+            this.addOutput(this.getMessage('didntUnderstand'))
         }
 
 

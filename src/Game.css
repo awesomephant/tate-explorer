@@ -41,6 +41,11 @@
     font-size: 1.5rem;
     line-height: 1.2;
     overflow-y: scroll;
+    padding-bottom: 2rem;
+}
+
+.game--output ul {
+    padding-bottom: 1rem;
 }
 
 .game--output li {
