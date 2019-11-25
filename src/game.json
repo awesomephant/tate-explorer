@@ -1,11 +1,4 @@
 {
-    "inventory": [
-        {
-            "id": "keycard",
-            "name": "Keycard",
-            "description": "Plastic."
-        }
-    ],
     "graph": [
         {
             "id": "entrance",
@@ -19,6 +12,7 @@
                 "node": "entrance"
             },
             "east": {
+                "locked": true,
                 "node": "store1"
             }
         },
@@ -113,7 +107,15 @@
                     "id": "shelves",
                     "name": "Shelves",
                     "canTake": false,
-                    "description": "The shelves reach from floor to ceiling. They are filled with green binders."
+                    "description": "The shelves reach from floor to ceiling. They are filled with green binders.",
+                    "visibleItems": [
+                        {
+                            "id": "binder",
+                            "canTake": true,
+                            "description": "Its a green binder. The contents are useless.",
+                            "name": "Green Binder"
+                        }
+                    ]
                 },
                 {
                     "id": "floor",
@@ -150,7 +152,7 @@
                                 "access card"
                             ],
                             "id": "card",
-                            "description": "asdsads"
+                            "description": "An access card similar to yours."
                         }
                     ]
                 },
@@ -163,6 +165,12 @@
                     "canTake": false,
                     "id": "door",
                     "description": "It's made of the same steel wire mesh as the walls, with solid steel hinges. A card reader is attached to the wall next to it.",
+                    "interactions": {
+                        "accesscard": {
+                            "message": "You unlock the door.",
+                            "action": "unlockStoreDoor"
+                        }
+                    },
                     "visibleItems": [
                         {
                             "canTake": false,
@@ -175,7 +183,7 @@
             ]
         },
         "store1": {
-            "title": "Store 1",
+            "title": "Red Store",
             "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system.",
             "items": [
                 {
@@ -221,30 +229,42 @@
             ]
         },
         "store2": {
-            "title":"Store 2",
-            "description": "it's a store"
+            "title": "Blue Store",
+            "description": "Another store room. It looks identical to the first one, except the shelves here are blue."
         },
         "store3": {
-            "title":"Store 3",
-            "description": "it's a store 3"
+            "title": "White Store",
+            "description": "Another store. It looks identical to the two others, except the shelves here are white."
         },
         "quarantine": {
-            "title":"Quarantine",
+            "title": "Quarantine",
             "description": "it's le quarantine zone"
         },
         "corridor2": {
-            "title":"South Corridor",
+            "title": "South Corridor",
             "description": "wahey a corridor"
         },
         "loadingDock": {
-            "title":"Loading Dock",
+            "title": "Loading Dock",
             "description": "such loading"
         }
     },
     "initialInventory": [
-        {"id": "accesscard", "name": "Access Card", "description": "A plastic card with your name and face printed on the front. The green stripe on the side denotes your access level: 2. It'll get you into the building and the office, but not much further."},
-        {"id": "wallet", "name": "Wallet", "description": "It's pretty thin."},
-        {"id": "keys", "name": "Keys", "description": "They're your housekeys, probably of little use in the archive."}
+        {
+            "id": "accesscard",
+            "name": "Access Card",
+            "description": "A plastic card with your name and face printed on the front. The green stripe on the side denotes your access level: 2. It'll get you into the building and the office, but not much further."
+        },
+        {
+            "id": "wallet",
+            "name": "Wallet",
+            "description": "It's pretty thin."
+        },
+        {
+            "id": "keys",
+            "name": "Keys",
+            "description": "They're your housekeys, probably of little use in the archive."
+        }
     ],
     "messages": {
         "init": [
@@ -270,6 +290,10 @@
         ],
         "noSuchThing": [
             "There is no such thing here."
+        ],
+        "locked": [
+            "It's locked.",
+            "The door is locked"
         ],
         "searchFailed": [
             "You don't find anything."

@@ -15,12 +15,16 @@ export default class Map extends React.Component {
     }
     draw() {
         const c = this.canvasRef.current.getContext('2d')
-        for (let i = 0; i < this.props.graph.length; i++) {
-            let x = 50 * i;
-            let node = this.props.graph[i];
-            c.fillRect(x, 10, 10, 10)
-            c.fillText(node.id, x, 10)
+        let x = 250;
+        let y = 480;
+        let done = false;
+        let currentNode = 'entrance';
+
+        c.fillRect(x,y,10,10)
+        if (currentNode.north){
+            
         }
+
     }
     render() {
         return (

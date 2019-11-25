@@ -1,7 +1,8 @@
 import React from 'react'
 import game from './game.json'
-import catalogue from './catalogue.json'
+//import catalogue from './catalogue.json'
 import util from './util.js'
+import {actions} from './actions.js'
 import Map from './Map.js'
 import './Game.css'
 
@@ -29,7 +30,6 @@ export default class Game extends React.Component {
 
     componentDidMount() {
         this.inputRef.current.focus();
-        this.addOutput('You are the archivist. Find TGA431.')
         this.fillStores()
     }
 
@@ -56,6 +56,7 @@ export default class Game extends React.Component {
                 west: { node: 'corridor1' }
             })
         }
+        console.dir(game.graph)
         this.addOutput(this.getMessage('init'))
     }
 
@@ -173,10 +174,25 @@ export default class Game extends React.Component {
                 return;
             }
         }
+        if (verb === 'use'){
+            console.log('In use flow')
+            if (command[2] === 'with' || command[2] === 'on'){
+                let target = this.getItemByID(command[3]);
+                if (target && target.interactions[noun]){
+                    this.addOutput(target.interactions[noun].message);
 
+                    //TODO: Make this dynamicly controlled from game.json
+                    game.graph = actions.unlockStoreDoor(game.graph);
+                    return;                
+                } else {
+                    this.addOutput(this.getMessage('noSuchThing'))
+                    return;
+                }
+            }
+        }
         if (verb === 'go') {
             // noun is a direction here
-            if (currentNode[noun]) {
+            if (currentNode[noun] && currentNode[noun].locked !== true) {
                 let nextRoom = currentNode[noun].node;
                 this.setState(function (prevState) {
                     prevState.currentRoom = nextRoom;
@@ -188,9 +204,11 @@ export default class Game extends React.Component {
                 } else if (game.rooms[nextRoom].visited === true) {
                     this.addOutput(game.rooms[nextRoom].title)
                 }
+            } else if (currentNode[noun] && currentNode[noun].locked === true){
+                this.addOutput(this.getMessage('locked'))
             }
             else {
-                this.addOutput(game.messages.cantGoThatWay[0])
+                this.addOutput(this.getMessage('cantGoThatWay'))
             }
         } else if (verb === 'take') {
             let item = this.getItemByID(noun);
@@ -217,7 +235,7 @@ export default class Game extends React.Component {
                 }
             } else if (noun === 'around') {
                 this.addOutput(game.rooms[this.state.currentRoom].description)
-            } else if (noun === 'shelf' && this.getItemByID('shelves')) {
+            } else if (noun === '_shelf' && this.getItemByID('shelves')) {
                 let item = this.getItemByID('shelves')
                 let index = command[2];
                 this.addOutput(item.shelves[index].description)
