@@ -22,6 +22,7 @@
                 "node": "corridor1"
             },
             "south": {
+                "locked": false,
                 "node": "store2"
             }
         },
@@ -31,6 +32,7 @@
                 "node": "store1"
             },
             "south": {
+                "locked": false,
                 "node": "store3"
             }
         },
@@ -164,11 +166,10 @@
                 {
                     "canTake": false,
                     "id": "door",
-                    "description": "It's made of the same steel wire mesh as the walls, with solid steel hinges. A card reader is attached to the wall next to it.",
+                    "description": "It's made of the same steel wire mesh as the walls, with steel security hinges. A card reader is attached to the wall next to it.",
                     "interactions": {
-                        "accesscard": {
-                            "message": "You unlock the door.",
-                            "action": "unlockStoreDoor"
+                        "keys": {
+                            "message": "The door has no visible lock — must be electronic."
                         }
                     },
                     "visibleItems": [
@@ -176,7 +177,13 @@
                             "canTake": false,
                             "name": "Card Reader",
                             "id": "cardreader",
-                            "description": "\"Swipe here.\""
+                            "description": "\"Swipe here.\"",
+                            "interactions": {
+                                "accesscard": {
+                                    "message": "A second after you hold the card up to the reader, a small light flashes green and the electronic lock on the door springs open.",
+                                    "action": "unlockStoreDoor"
+                                }
+                            }
                         }
                     ]
                 }
@@ -189,27 +196,7 @@
                 {
                     "canTake": false,
                     "id": "shelves",
-                    "description": "They look heavy.",
-                    "shelves": [
-                        {
-                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 123\"."
-                        },
-                        {
-                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 124\"."
-                        },
-                        {
-                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 125\"."
-                        },
-                        {
-                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 126\"."
-                        },
-                        {
-                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 127\"."
-                        },
-                        {
-                            "description": "The shelf is made of black and grey sheet metal, and tall enough to require a ladder. Its six levels are filled with binders, envelopes, and boxes of various shapes and sizes. The label reads \"TGA 128\"."
-                        }
-                    ]
+                    "description": "They look heavy."
                 },
                 {
                     "canTake": false,
@@ -238,7 +225,7 @@
         },
         "quarantine": {
             "title": "Quarantine",
-            "description": "it's le quarantine zone"
+            "description": "This is where boxes of archive material are checked for bugs and mould before we move them into permanent storage."
         },
         "corridor2": {
             "title": "South Corridor",
@@ -246,13 +233,13 @@
         },
         "loadingDock": {
             "title": "Loading Dock",
-            "description": "such loading"
+            "description": "The loading dock has space for two trucks, though it is currently empty. A raised concrete platform allows level access to whatever goods are being delivered. A handful of steps lead down to streetlevel."
         }
     },
     "initialInventory": [
         {
             "id": "accesscard",
-            "name": "Access Card",
+            "name": "Access Card (Level 2)",
             "description": "A plastic card with your name and face printed on the front. The green stripe on the side denotes your access level: 2. It'll get you into the building and the office, but not much further."
         },
         {
@@ -281,7 +268,7 @@
             "You can't take that.",
             "Better to leave that there.",
             "A bit too bulky.",
-            "You shouldn't take that.",
+            "You probably shouldn't take that.",
             "Better to leave that where it is."
         ],
         "didntUnderstand": [
@@ -297,6 +284,10 @@
         ],
         "searchFailed": [
             "You don't find anything."
+        ],
+        "itemDidntWork": [
+            "Nothing happens.",
+            "I don't think that would work."
         ]
     },
     "synonyms": [
@@ -350,6 +341,24 @@
                 "look",
                 "lookat",
                 "view"
+            ]
+        },
+        {
+            "term": "cardreader",
+            "match": [
+                "reader"
+            ]
+        },
+        {
+            "term": "keys",
+            "match": [
+                "key"
+            ]
+        },
+        {
+            "term": "accesscard",
+            "match": [
+                "card"
             ]
         }
     ]

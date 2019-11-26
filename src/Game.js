@@ -2,8 +2,8 @@ import React from 'react'
 import game from './game.json'
 //import catalogue from './catalogue.json'
 import util from './util.js'
-import {actions} from './actions.js'
-import Map from './Map.js'
+import { actions } from './actions.js'
+// import Map from './Map.js'
 import './Game.css'
 
 export default class Game extends React.Component {
@@ -33,9 +33,9 @@ export default class Game extends React.Component {
         this.fillStores()
     }
 
-    getGraphIndexByID(id){
-        for (let i = 0; i < game.graph.length; i++){
-            if (game.graph[i].id === id){
+    getGraphIndexByID(id) {
+        for (let i = 0; i < game.graph.length; i++) {
+            if (game.graph[i].id === id) {
                 return i;
             }
         }
@@ -174,16 +174,19 @@ export default class Game extends React.Component {
                 return;
             }
         }
-        if (verb === 'use'){
+        if (verb === 'use') {
             console.log('In use flow')
-            if (command[2] === 'with' || command[2] === 'on'){
+            if (command[2] === 'with' || command[2] === 'on') {
                 let target = this.getItemByID(command[3]);
-                if (target && target.interactions[noun]){
+                target = this.resolveSynonyms(target)
+                if (target && target.interactions && target.interactions[noun]) {
                     this.addOutput(target.interactions[noun].message);
-
                     //TODO: Make this dynamicly controlled from game.json
                     game.graph = actions.unlockStoreDoor(game.graph);
-                    return;                
+                    return;
+                } else if (target) {
+                    this.addOutput(this.getMessage('itemDidntWork'))
+                    return;
                 } else {
                     this.addOutput(this.getMessage('noSuchThing'))
                     return;
@@ -204,7 +207,7 @@ export default class Game extends React.Component {
                 } else if (game.rooms[nextRoom].visited === true) {
                     this.addOutput(game.rooms[nextRoom].title)
                 }
-            } else if (currentNode[noun] && currentNode[noun].locked === true){
+            } else if (currentNode[noun] && currentNode[noun].locked === true) {
                 this.addOutput(this.getMessage('locked'))
             }
             else {
@@ -281,7 +284,7 @@ export default class Game extends React.Component {
                     <input ref={this.inputRef} onKeyPress={this.detectSubmit} value={this.state.input} onChange={this.handleChange} className='controls--field'></input>
                     <button onClick={this.handleInput} className='controls--button'>Enter</button>
                 </div>
-                <Map graph={game.graph}></Map>
+                {/* <Map graph={game.graph}></Map> */}
             </div>
 
         )
