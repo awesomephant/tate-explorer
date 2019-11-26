@@ -1,16 +1,32 @@
+body {
+    overflow: hidden;
+}
 .game {
     --accent: rgb(255, 255, 255);
     --background: rgb(0, 0, 0);
     background: var(--background);
-    width: 100vw;
     height: 100vh;
+    width: 100vw;
     font-family: "Untitled Serif";
     display: flex;
     flex-flow: column;
+    
+    /* For TV display */
+    width: calc(101vw);
+    height: calc(100vh - 29px);
+    padding-top: 30px;
+    padding-left: 20px;
 }
 .game--controls {
     display: flex;
     flex-basis: 2rem;
+    
+    /* For TV display */
+    width: calc(80vw);
+    align-self: center;
+    border: 1px solid white;
+    border-radius: 4px;
+    transform: translateY(100%);
 }
 .controls--field {
     display: block;
@@ -18,39 +34,41 @@
     padding: .5rem 1rem;
     border: 0;
     color: var(--accent);
+    font-size: 2rem;
     font-weight: bold;
+    text-transform: lowercase;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 1rem;
     background: transparent;
 }
 .controls--button {
     flex-grow: 1;
     background: none;
+    display: none;
     border: 0;
     color: var(--accent);
     font-weight: bold;
     text-decoration: underline;
 }
 
-
 .game--status {
     padding: .6rem 1rem;
-    color: var(--background);
-    background: var(--accent);
+    color: var(--accent);
+    text-decoration: underline;
     text-transform: capitalize;
     font-size: 1.5rem;
     transform: scaleX(.9);
-    transform-origin: left;
+    text-align: center;
+    transform-origin: center;
 }
 .game--output {
-    flex-basis: 100%;
-    flex-grow: 1;
-    border-bottom: 1px solid var(--accent);
+    flex-basis: 85%;
     color: var(--accent);
     padding: 1rem;
     font-size: 1.7rem;
     line-height: 1.2;
     overflow-y: scroll;
-    padding-bottom: 2rem;
+    padding-bottom: 7rem;
 }
 
 .game--output ul {
