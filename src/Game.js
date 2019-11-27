@@ -15,6 +15,7 @@ export default class Game extends React.Component {
             currentRoom: 'entrance',
             visitedRooms: [],
             outputs: [],
+            failedCommandCount: 0,
             inventory: game.initialInventory
         }
 
@@ -26,11 +27,31 @@ export default class Game extends React.Component {
         this.detectSubmit = this.detectSubmit.bind(this)
         this.addOutput = this.addOutput.bind(this)
         this.getItemByID = this.getItemByID.bind(this)
+        this.resolveAlternateTriggers = this.resolveAlternateTriggers.bind(this)
     }
 
     componentDidMount() {
         this.inputRef.current.focus();
         this.fillStores()
+    }
+
+    resolveAlternateTriggers(obj, term) {
+        let alternates = obj.alternateTriggers;
+        if (alternates) {
+            for (let i = 0; i < alternates.length; i++) {
+                let alt = alternates[i];
+                for (let j = 0; j < alt.match.length; j++) {
+                    if (alt.match[j] === term) {
+                        return alt.term;
+                    }
+                }
+            }
+            console.warn('No match found.')
+            return term;
+        } else {
+            console.warn('Object has no alternate triggers.')
+            return term;
+        }
     }
 
     getGraphIndexByID(id) {
@@ -58,6 +79,7 @@ export default class Game extends React.Component {
         }
         console.dir(game.graph)
         this.addOutput(this.getMessage('init'))
+        this.addOutput(this.getMessage('help'))
     }
 
     getNodeByID(id) {
@@ -143,19 +165,28 @@ export default class Game extends React.Component {
         return word;
     }
 
-    getMessage(msg) {
+    getMessage(msg, insertWord = '') {
         if (game.messages[msg]) {
-            return game.messages[msg][util.gri(0, game.messages[msg].length - 1)]
+            let message = game.messages[msg][util.gri(0, game.messages[msg].length - 1)]
+            message = message.replace('%', insertWord)
+            return message
         }
     }
 
     handleInput() {
         this.setState({ prevInput: this.state.input })
         let s = this.state.input.replace('at ', '')
-        let command = s.split(' ')
-
-        let verb = this.resolveSynonyms(command[0]);
-        let noun = this.resolveSynonyms(command[1]);
+        s = s.replace('through ', '')
+        s = s.replace('to ', '')
+        s = s.toLocaleLowerCase()
+        let command = []
+        let words = s.split(' ');
+        for (let i = 0; i < words.length; i++) {
+            command.push(this.resolveSynonyms(words[i]))
+        }
+        console.log(command)
+        let verb = command[0];
+        let noun = command[1];
         let currentNode = this.getNodeByID(this.state.currentRoom);
 
         this.setState(function (prevState) {
@@ -169,14 +200,26 @@ export default class Game extends React.Component {
                 verb = 'go'
             } else if (noun === 'inventory') {
                 verb = 'examine'
-            } else if (noun === 'help') {
+            }
+            else if (noun === 'help') {
                 this.addOutput(this.getMessage('help'))
                 return;
+            }
+            else if (noun === 'examine') {
+                verb = 'examine';
+                noun = 'around';
+            }
+            else if (noun === 'go') {
+                this.addOutput(this.getMessage('giveCompass'))
+            } else if (this.getItemByID(noun)) {
+                verb = 'examine'
             }
         }
         if (verb === 'use') {
             console.log('In use flow')
-            if (command[2] === 'with' || command[2] === 'on') {
+            let itemExists = this.getItemByID(noun)
+            console.log(itemExists)
+            if ((command[2] === 'with' || command[2] === 'on') && itemExists) {
                 let target = this.getItemByID(command[3]);
                 target = this.resolveSynonyms(target)
                 if (target && target.interactions && target.interactions[noun]) {
@@ -191,10 +234,18 @@ export default class Game extends React.Component {
                     this.addOutput(this.getMessage('noSuchThing'))
                     return;
                 }
+            } else if (itemExists) {
+                this.addOutput(this.getMessage('giveTarget', command[1]))
+                return;
+            } else {
+                this.addOutput(this.getMessage('noSuchThing'))
+                return;
             }
         }
         if (verb === 'go') {
             // noun is a direction here
+            noun = this.resolveAlternateTriggers(currentNode, noun)
+
             if (currentNode[noun] && currentNode[noun].locked !== true) {
                 let nextRoom = currentNode[noun].node;
                 this.setState(function (prevState) {
@@ -202,7 +253,7 @@ export default class Game extends React.Component {
                     return prevState;
                 })
                 if (!game.rooms[nextRoom].visited) {
-                    this.addOutput(game.rooms[nextRoom].description)
+                    this.addOutput(`${game.rooms[nextRoom].title}/n${game.rooms[nextRoom].description}`)
                     game.rooms[nextRoom].visited = true;
                 } else if (game.rooms[nextRoom].visited === true) {
                     this.addOutput(game.rooms[nextRoom].title)
@@ -230,18 +281,17 @@ export default class Game extends React.Component {
                 })
                 if (list.length > 0) {
                     this.addOutput(`You are carrying:`)
+                    let s = '';
                     for (const item in list) {
-                        this.addOutput(list[item])
+                        s += `${list[item]}/n`
                     }
+                    this.addOutput(s)
                 } else {
                     this.addOutput(`Your're not carrying anything.`)
                 }
             } else if (noun === 'around') {
+                this.addOutput(game.rooms[this.state.currentRoom].title)
                 this.addOutput(game.rooms[this.state.currentRoom].description)
-            } else if (noun === '_shelf' && this.getItemByID('shelves')) {
-                let item = this.getItemByID('shelves')
-                let index = command[2];
-                this.addOutput(item.shelves[index].description)
             } else {
                 let item = this.getItemByID(noun)
                 if (item) {
@@ -252,15 +302,28 @@ export default class Game extends React.Component {
             }
         } else if (verb === 'search') {
             let item = this.getItemByID(noun)
-            if (item.hiddenItems) {
-                item.searched = true;
-                this.addOutput(item.searchDescription);
+            if (item) {
+                if (item.hiddenItems) {
+                    item.searched = true;
+                    this.addOutput(item.searchDescription);
+                } else {
+                    item.searched = true;
+                    this.addOutput(this.getMessage('searchFailed'))
+                }
             } else {
-                item.searched = true;
-                this.addOutput(this.getMessage('searchFailed'))
+                this.addOutput(this.getMessage('noSuchThing'))
             }
         } else {
-            this.addOutput(this.getMessage('didntUnderstand'))
+            this.setState(function (prevState) {
+                prevState.failedCommandCount++
+                return prevState;
+            })
+            if (this.state.failedCommandCount > 2) {
+                this.addOutput(this.getMessage('hint'))
+                this.setState({ failedCommandCount: 0 })
+            } else {
+                this.addOutput(this.getMessage('didntUnderstand'))
+            }
         }
 
 
@@ -268,9 +331,13 @@ export default class Game extends React.Component {
 
     render() {
 
-        const outputItems = this.state.outputs.map((msg, index) =>
-            <li key={index}>{msg}</li>
-        );
+        const outputItems = this.state.outputs.map(function (msg, index) {
+            let paragraphs = msg.split('/n');
+            const ps = paragraphs.map(function (p, index) {
+                return <p>{p}</p>
+            })
+            return <li key={index}>{ps}</li>
+        });
 
         return (
             <div className='game'>

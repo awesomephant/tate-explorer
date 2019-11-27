@@ -4,10 +4,11 @@ body {
 .game {
     --accent: rgb(255, 255, 255);
     --background: rgb(0, 0, 0);
+    --serif: "Untitled Serif", Times New Roman, serif;
     background: var(--background);
     height: 100vh;
     width: 100vw;
-    font-family: "Untitled Serif";
+    font-family: var(--serif);
     display: flex;
     flex-flow: column;
     
@@ -26,19 +27,17 @@ body {
     align-self: center;
     border: 1px solid white;
     border-radius: 4px;
-    transform: translateY(100%);
+    transform: translateY(0%);
 }
 .controls--field {
     display: block;
     flex-basis: 90%;
     padding: .5rem 1rem;
     border: 0;
+    font-family: var(--serif);
     color: var(--accent);
-    font-size: 2rem;
-    font-weight: bold;
     text-transform: lowercase;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
+    font-size: 1.7rem;
     background: transparent;
 }
 .controls--button {
@@ -52,14 +51,19 @@ body {
 }
 
 .game--status {
-    padding: .6rem 1rem;
-    color: var(--accent);
-    text-decoration: underline;
+    padding: .1rem .5rem;
+    padding-top: .2rem;
+    color: var(--background);
     text-transform: capitalize;
     font-size: 1.5rem;
-    transform: scaleX(.9);
+    width: max-content;
+    flex-shrink: 1;
+    align-self: center;
+    display: inline-block;
+    background: var(--accent);
     text-align: center;
     transform-origin: center;
+    border-radius: 1px;
 }
 .game--output {
     flex-basis: 85%;
@@ -70,7 +74,6 @@ body {
     overflow-y: scroll;
     padding-bottom: 7rem;
 }
-
 .game--output ul {
     padding-bottom: 1rem;
 }
@@ -79,5 +82,11 @@ body {
     display: block;
     list-style: none;
     transform-origin: left;
+    margin-bottom: .5em;
     /* transform: scaleX(.93); */
 }
+
+.game--output li p{
+    display: block;
+    min-height: 1em;
+ }

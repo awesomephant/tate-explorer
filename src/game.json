@@ -4,7 +4,15 @@
             "id": "entrance",
             "north": {
                 "node": "corridor1"
-            }
+            },
+            "alternateTriggers": [
+                {
+                    "term": "north",
+                    "match": [
+                        "door"
+                    ]
+                }
+            ]
         },
         {
             "id": "corridor1",
@@ -14,7 +22,15 @@
             "east": {
                 "locked": true,
                 "node": "store1"
-            }
+            },
+            "alternateTriggers": [
+                {
+                    "term": "east",
+                    "match": [
+                        "door"
+                    ]
+                }
+            ]
         },
         {
             "id": "store1",
@@ -85,7 +101,7 @@
                     "canTake": true,
                     "id": "leaflet",
                     "name": "Leaflet",
-                    "description": "The leaflet reads: \"Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.\""
+                    "description": "The leaflet reads: “Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.”"
                 },
                 {
                     "id": "desk",
@@ -143,17 +159,19 @@
                             "id": "glove",
                             "name": "Blue rubber glove",
                             "description": "Looks unused (thank god)."
+                        },
+                        {
+                            "canTake": false,
+                            "id": "documents",
+                            "name": "Documents",
+                            "description": "The documents look unremarkable."
                         }
                     ],
                     "hiddenItems": [
                         {
                             "canTake": true,
-                            "triggers": [
-                                "card",
-                                "keycard",
-                                "access card"
-                            ],
-                            "id": "card",
+                            "id": "accesscard",
+                            "name": "Access Card (Level 2)",
                             "description": "An access card similar to yours."
                         }
                     ]
@@ -165,8 +183,13 @@
                 },
                 {
                     "canTake": false,
+                    "id": "wall",
+                    "description": "Steel wire mesh, painted white. They look solid."
+                },
+                {
+                    "canTake": false,
                     "id": "door",
-                    "description": "It's made of the same steel wire mesh as the walls, with steel security hinges. A card reader is attached to the wall next to it.",
+                    "description": "It's made of the same steel wire mesh as the walls, with steel security hinges. A card-reader is attached to the wall next to it.",
                     "interactions": {
                         "keys": {
                             "message": "The door has no visible lock — must be electronic."
@@ -177,7 +200,7 @@
                             "canTake": false,
                             "name": "Card Reader",
                             "id": "cardreader",
-                            "description": "\"Swipe here.\"",
+                            "description": "“Swipe here.“",
                             "interactions": {
                                 "accesscard": {
                                     "message": "A second after you hold the card up to the reader, a small light flashes green and the electronic lock on the door springs open.",
@@ -238,11 +261,6 @@
     },
     "initialInventory": [
         {
-            "id": "accesscard",
-            "name": "Access Card (Level 2)",
-            "description": "A plastic card with your name and face printed on the front. The green stripe on the side denotes your access level: 2. It'll get you into the building and the office, but not much further."
-        },
-        {
             "id": "wallet",
             "name": "Wallet",
             "description": "It's pretty thin."
@@ -255,10 +273,10 @@
     ],
     "messages": {
         "init": [
-            "You are the archivist. Find TGA431. Start by looking around the room, or type \"help\" to show a list of available commands."
+            "You are the archivist. Find TGA431. Start by typing “look around”, or type “help” to show a list of available commands."
         ],
         "help": [
-            "You can interact with the world by typing commands in the format \"[verb]\" or \"[verb] [noun]\". Common verbs include \"go\", \"take\", \"look\", \"examine\", and \"use\". To move around, type \"go\" followed by a compass direction like this: \"go north\". Type \"Inventory\" to see what you're carrying, and \"help\" to display this message."
+            "You're playing a text adventure. It works much like modern videogames, except you control your character by typing text commands into the box at the bottom of the screen. Most valid commands come in the form of “[verb]” or “[verb] [noun].” /n /n Nouns /n Most things in the game world can be referenced by their name. Type “look at [noun]” to get details about any given item you encounter. When you enter a new location, some objects may be hidden. Examine your surroundings to reveal them. /n/n Verbs /n Common verbs include “go”, “take”, “look”, “search”, and “use”, but additional verbs may become available in certain situations. /n/n Movement/n To move your character around the game world, type “go” followed by a compass direction. For instance, “go north” will move your character to the north. Read the descriptions of your surroundings closely to find out where you can go. /n/n Inventory /n You can pick up objects you encounter throughout the game by typing “take [noun]”. These will be added to your inventory. To see what you're carrying, type “inventory”. To use items on your inventory, type a command in the form “use [noun] on [noun]”, for instance: “use key on door”.  /n/n Other useful commands /n Type “reset” to start over, and “help” to display this message."
         ],
         "cantGoThatWay": [
             "You can't go in that direction",
@@ -273,10 +291,12 @@
         ],
         "didntUnderstand": [
             "I didn't understand that.",
-            "That's not a word I know."
+            "That's not a word I know.",
+            "That's not a word I recognise."
         ],
         "noSuchThing": [
-            "There is no such thing here."
+            "There is no such thing here.",
+            "You can't see any such thing."
         ],
         "locked": [
             "It's locked.",
@@ -288,6 +308,15 @@
         "itemDidntWork": [
             "Nothing happens.",
             "I don't think that would work."
+        ],
+        "giveCompass": [
+            "You'll have to say which compass direction to go in."
+        ],
+        "giveTarget": [
+            "You'll have to say what you want to use the % on."
+        ],
+        "hint": [
+            "Remember you can type “help” to view a list of available commands. If you're stuck, maybe look at your surroundings by typing “look around”."
         ]
     },
     "synonyms": [
@@ -318,6 +347,12 @@
             ]
         },
         {
+            "term": "help",
+            "match": [
+                "h"
+            ]
+        },
+        {
             "term": "inventory",
             "match": [
                 "i",
@@ -340,19 +375,27 @@
             "match": [
                 "look",
                 "lookat",
-                "view"
+                "view",
+                "l"
             ]
         },
         {
             "term": "cardreader",
             "match": [
-                "reader"
+                "reader",
+                "card-reader"
             ]
         },
         {
             "term": "keys",
             "match": [
                 "key"
+            ]
+        },
+        {
+            "term": "wall",
+            "match": [
+                "walls"
             ]
         },
         {
