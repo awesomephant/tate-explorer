@@ -146,6 +146,15 @@
         "corridor1": {
             "title": "Corridor",
             "description": "You are in a brightly-lit corridor. You see a narrow desk to one side. The walls on either side are made of steel wire mesh painted white, beyond which rows of storage shelves are visible. There is a door to the East.",
+            "alternateTriggers": [
+                {
+                    "term": "cardreader",
+                    "match": [
+                        "reader",
+                        "card-reader"
+                    ]
+                }
+            ],
             "items": [
                 {
                     "canTake": false,
@@ -215,6 +224,14 @@
         "store1": {
             "title": "Red Store",
             "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system.",
+            "alternateTriggers": [
+                {
+                    "term": "shelves",
+                    "match": [
+                        "shelf"
+                    ]
+                }
+            ],
             "items": [
                 {
                     "canTake": false,
@@ -317,6 +334,9 @@
         ],
         "hint": [
             "Remember you can type “help” to view a list of available commands. If you're stuck, maybe look at your surroundings by typing “look around”."
+        ],
+        "shelfDescription": [
+            "The shelf is made of sheet metal."
         ]
     },
     "synonyms": [
@@ -353,6 +373,12 @@
             ]
         },
         {
+            "term": "back",
+            "match": [
+                "b"
+            ]
+        },
+        {
             "term": "inventory",
             "match": [
                 "i",
@@ -377,13 +403,6 @@
                 "lookat",
                 "view",
                 "l"
-            ]
-        },
-        {
-            "term": "cardreader",
-            "match": [
-                "reader",
-                "card-reader"
             ]
         },
         {

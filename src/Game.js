@@ -1,6 +1,6 @@
 import React from 'react'
 import game from './game.json'
-//import catalogue from './catalogue.json'
+import catalogue from './catalogue.json'
 import util from './util.js'
 import { actions } from './actions.js'
 // import Map from './Map.js'
@@ -12,7 +12,7 @@ export default class Game extends React.Component {
         this.state = {
             input: '',
             prevInput: '',
-            currentRoom: 'entrance',
+            currentRoom: 'store1',
             visitedRooms: [],
             outputs: [],
             failedCommandCount: 0,
@@ -38,6 +38,7 @@ export default class Game extends React.Component {
     resolveAlternateTriggers(obj, term) {
         let alternates = obj.alternateTriggers;
         if (alternates) {
+            console.warn('Object has alternate triggers, searching...')
             for (let i = 0; i < alternates.length; i++) {
                 let alt = alternates[i];
                 for (let j = 0; j < alt.match.length; j++) {
@@ -76,6 +77,28 @@ export default class Game extends React.Component {
                 back: { node: 'store1' },
                 west: { node: 'corridor1' }
             })
+            game.rooms[shelfID] = {
+                id: shelfID,
+                title: `Shelf ${i + 1}`,
+                description: game.messages.shelfDescription[0],
+            }
+            let collectionCount = 10;
+            let shelfIndex = this.getGraphIndexByID(shelfID)
+            let testCollection = catalogue.collections[0];
+            let id = testCollection.id.replace(' ', '-').toLowerCase()
+            let collectionID = shelfID + '-' + id
+            for (let j = 0; j < collectionCount; j++) {
+                game.graph[shelfIndex][id] = {node: collectionID}
+                game.graph.push({
+                    id: collectionID,
+                    back: {node: shelfID}
+                })
+                game.rooms[collectionID] = {
+                    id: collectionID,
+                    title: id,
+                    description: `The filing card reads:/n${testCollection.details.Title} (${testCollection.details.Date})/n${testCollection.details.Description}`
+                }
+            }
         }
         console.dir(game.graph)
         this.addOutput(this.getMessage('init'))
@@ -90,6 +113,7 @@ export default class Game extends React.Component {
     }
 
     getItemByID(id) {
+        id = this.resolveAlternateTriggers(game.rooms[this.state.currentRoom], id)
         for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
             let item = game.rooms[this.state.currentRoom].items[i];
             if (item.id === id) {
@@ -185,6 +209,7 @@ export default class Game extends React.Component {
             command.push(this.resolveSynonyms(words[i]))
         }
         console.log(command)
+        console.log(game)
         let verb = command[0];
         let noun = command[1];
         let currentNode = this.getNodeByID(this.state.currentRoom);
@@ -196,7 +221,7 @@ export default class Game extends React.Component {
         this.setState({ input: '' })
         if (command.length === 1) {
             noun = this.resolveSynonyms(command[0])
-            if (noun === 'north' || noun === 'south' || noun === 'east' || noun === 'west') {
+            if (noun === 'north' || noun === 'south' || noun === 'east' || noun === 'west' || noun === 'back') {
                 verb = 'go'
             } else if (noun === 'inventory') {
                 verb = 'examine'
@@ -246,6 +271,15 @@ export default class Game extends React.Component {
             // noun is a direction here
             noun = this.resolveAlternateTriggers(currentNode, noun)
 
+            if (noun === 'shelf') {
+                if (command[2]) {
+                    noun = `shelf-${command[2]}`
+                } else {
+                    noun = `shelf-1`
+                    this.addOutput('(you walk up to the first shelf)')
+                }
+            }
+
             if (currentNode[noun] && currentNode[noun].locked !== true) {
                 let nextRoom = currentNode[noun].node;
                 this.setState(function (prevState) {
@@ -290,8 +324,7 @@ export default class Game extends React.Component {
                     this.addOutput(`Your're not carrying anything.`)
                 }
             } else if (noun === 'around') {
-                this.addOutput(game.rooms[this.state.currentRoom].title)
-                this.addOutput(game.rooms[this.state.currentRoom].description)
+                this.addOutput(`${game.rooms[this.state.currentRoom].title}/n${game.rooms[this.state.currentRoom].description}`)
             } else {
                 let item = this.getItemByID(noun)
                 if (item) {
