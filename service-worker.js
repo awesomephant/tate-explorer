@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/tate-explorer/precache-manifest.fb9073ad20598ee1c429502b912a71c3.js"
+  "/tate-explorer/precache-manifest.b8c6efce390c421de302f56ed65cb2f8.js"
 );
 
 self.addEventListener('message', (event) => {
