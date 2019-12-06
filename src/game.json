@@ -95,7 +95,7 @@
     "rooms": {
         "entrance": {
             "title": "Reading Room",
-            "description": "You are standing in a reading room. There are some desks and chairs on soft carpeted floor, tall shelves line the walls. There is a door behind a counter to the North.",
+            "description": "You are standing in a reading room. There are desks and chairs on soft carpeted floor, tall shelves line the walls. There is a door behind a counter to the North.",
             "items": [
                 {
                     "canTake": true,
@@ -145,7 +145,7 @@
         },
         "corridor1": {
             "title": "Corridor",
-            "description": "You are in a brightly-lit corridor. You see a narrow desk to one side. The walls on either side are made of steel wire mesh painted white, beyond which rows of storage shelves are visible. There is a door to the East.",
+            "description": "You are in a brightly-lit corridor. The walls on either side are made of steel wire mesh painted white, beyond which rows of storage shelves are visible.  You see a small desk and chair to one side. There are doors to the South (leading back to the reading room) and the East.",
             "alternateTriggers": [
                 {
                     "term": "cardreader",
@@ -153,27 +153,57 @@
                         "reader",
                         "card-reader"
                     ]
+                },
+                {
+                    "term": "wall",
+                    "match": [
+                        "walls",
+                        "mesh",
+                        "wire"
+                    ]
                 }
             ],
             "items": [
                 {
                     "canTake": false,
+                    "id": "lights",
+                    "name": "Lights",
+                    "description": "The flourescent tubes exude cold light and a low electric hum."
+                },
+                {
+                    "canTake": false,
                     "id": "desk",
                     "examined": false,
-                    "description": "Utilitarian. Empty boxes, stacks of documents, paper files, various stationary, and a single blue rubber glove are scattered across the surface.",
+                    "description": "Utilitarian. Scattered across the wooden surface you see $visibleItems.",
                     "searchDescription": "You search the desk. After a little while, you find an access card under a stack of acquisition forms.",
                     "visibleItems": [
-                        {
-                            "canTake": true,
-                            "id": "glove",
-                            "name": "Blue rubber glove",
-                            "description": "Looks unused (thank god)."
-                        },
                         {
                             "canTake": false,
                             "id": "documents",
                             "name": "Documents",
+                            "listName": "stacks of documents",
                             "description": "The documents look unremarkable."
+                        },
+                        {
+                            "canTake": false,
+                            "id": "files",
+                            "name": "Paper Files",
+                            "listName": "paper files",
+                            "description": "You don't see anything special about the paper files."
+                        },
+                        {
+                            "canTake": true,
+                            "id": "clipboard",
+                            "name": "Clipboard",
+                            "listName": "a clipboard",
+                            "description": "The clipboard is made of thin plywood. Several sheets of paper bearing unintelligible notes are attached to it."
+                        },
+                        {
+                            "canTake": true,
+                            "id": "glove",
+                            "name": "Blue rubber glove",
+                            "listName": "a single blue rubber glove",
+                            "description": "Thankfully, the glove looks unused."
                         }
                     ],
                     "hiddenItems": [
@@ -188,17 +218,17 @@
                 {
                     "canTake": false,
                     "id": "floor",
-                    "description": "Light-grey linoleum."
+                    "description": "Light-grey linoleum (Spotless)."
                 },
                 {
                     "canTake": false,
                     "id": "wall",
-                    "description": "Steel wire mesh, painted white. They look solid."
+                    "description": "The walls are made of steel wire mesh, painted white. They look solid."
                 },
                 {
                     "canTake": false,
                     "id": "door",
-                    "description": "It's made of the same steel wire mesh as the walls, with steel security hinges. A card-reader is attached to the wall next to it.",
+                    "description": "It's made of the same steel wire mesh as the walls, attached with massive security hinges. Underneath a sign reading \"These doors must be kept locked at all times\", a card-reader is attached.",
                     "interactions": {
                         "keys": {
                             "message": "The door has no visible lock — must be electronic."
@@ -223,7 +253,7 @@
         },
         "store1": {
             "title": "Red Store",
-            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system.",
+            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system. A door to the West leads back to the corridor, further store rooms lie to the South.",
             "alternateTriggers": [
                 {
                     "term": "shelves",
@@ -236,28 +266,23 @@
                 {
                     "canTake": false,
                     "id": "shelves",
-                    "description": "They look heavy."
+                    "description": "The shelves look heavy. To see what they contain, you'll have to walk closer to one."
                 },
                 {
                     "canTake": false,
                     "id": "floor",
-                    "descriprion": "Unremarkable."
+                    "description": "Unremarkable."
                 },
                 {
                     "canTake": false,
                     "id": "tracks",
-                    "descriprion": "Steel, polished to a high sheen by repeated use."
-                },
-                {
-                    "id": "box",
-                    "canTake": true,
-                    "descriprion": "You pick up a random box from the shelf. Opening it reveals a stack of neat paper files."
+                    "description": "Steel, polished to a high sheen by repeated use."
                 }
             ]
         },
         "store2": {
             "title": "Blue Store",
-            "description": "Another store room. It looks identical to the first one, except the shelves here are blue."
+            "description": "You have entered another store room. It looks nearly identical to the first one — linoleum floor. except the shelves here are blue."
         },
         "store3": {
             "title": "White Store",
@@ -293,7 +318,7 @@
             "You are the archivist. Find TGA431. Start by typing “look around”, or type “help” to show a list of available commands."
         ],
         "help": [
-            "You're playing a text adventure. It works much like modern videogames, except you control your character by typing text commands into the box at the bottom of the screen. Most valid commands come in the form of “[verb]” or “[verb] [noun].” /n /n Nouns /n Most things in the game world can be referenced by their name. Type “look at [noun]” to get details about any given item you encounter. When you enter a new location, some objects may be hidden. Examine your surroundings to reveal them. /n/n Verbs /n Common verbs include “go”, “take”, “look”, “search”, and “use”, but additional verbs may become available in certain situations. /n/n Movement/n To move your character around the game world, type “go” followed by a compass direction. For instance, “go north” will move your character to the north. Read the descriptions of your surroundings closely to find out where you can go. /n/n Inventory /n You can pick up objects you encounter throughout the game by typing “take [noun]”. These will be added to your inventory. To see what you're carrying, type “inventory”. To use items on your inventory, type a command in the form “use [noun] on [noun]”, for instance: “use key on door”.  /n/n Other useful commands /n Type “reset” to start over, and “help” to display this message."
+            "You control your character by typing text commands into the box at the bottom of the screen, and hitting Enter on the keyboard. Most valid commands come in the form of “[verb]” or “[verb] [noun].” /n /n Nouns /n Most things in the game world can be referenced by their name. Type “look at [noun]” to get details about any given item you encounter. When you enter a new location, some objects may be hidden. Examine your surroundings to reveal them. /n/n Verbs /n Common verbs include “go”, “take”, “look”, “search”, and “use”, but additional verbs may become available in certain situations. /n/n Movement/n To move your character around the game world, type “go” followed by a compass direction. For instance, “go north” will move your character to the north. Read the descriptions of your surroundings closely to find out where you can go. /n/n Inventory /n You can pick up objects you encounter throughout the game by typing “take [noun]”. These will be added to your inventory. To see what you're carrying, type “inventory”. To use items on your inventory, type a command in the form “use [noun] on [noun]”, for instance: “use key on door”.  /n/n Other useful commands /n Type “reset” to start over, and “help” to display this message."
         ],
         "cantGoThatWay": [
             "You can't go in that direction",
@@ -327,7 +352,7 @@
             "I don't think that would work."
         ],
         "giveCompass": [
-            "You'll have to say which compass direction to go in."
+            "You'll have to say which direction to go in."
         ],
         "giveTarget": [
             "You'll have to say what you want to use the % on."
@@ -394,6 +419,12 @@
                 "pick",
                 "pickup",
                 "get"
+            ]
+        },
+        {
+            "term": "go",
+            "match": [
+                "walk"
             ]
         },
         {

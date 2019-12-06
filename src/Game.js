@@ -12,6 +12,7 @@ export default class Game extends React.Component {
         this.state = {
             input: '',
             prevInput: '',
+            moves: 0,
             currentRoom: 'store1',
             visitedRooms: [],
             outputs: [],
@@ -27,12 +28,20 @@ export default class Game extends React.Component {
         this.detectSubmit = this.detectSubmit.bind(this)
         this.addOutput = this.addOutput.bind(this)
         this.getItemByID = this.getItemByID.bind(this)
-        this.resolveAlternateTriggers = this.resolveAlternateTriggers.bind(this)
+        this.resolveAlternateTriggers = this.resolveAlternateTriggers.bind(this);
+        this.isDirectionValid = this.isDirectionValid.bind(this)
     }
 
     componentDidMount() {
         this.inputRef.current.focus();
         this.fillStores()
+        for (let room in game.rooms) {
+            if (Object.prototype.hasOwnProperty.call(game.rooms, room)) {
+                if (!game.rooms[room].items) {
+                    game.rooms[room].items = []
+                }
+            }
+        }
     }
 
     resolveAlternateTriggers(obj, term) {
@@ -80,29 +89,52 @@ export default class Game extends React.Component {
             game.rooms[shelfID] = {
                 id: shelfID,
                 title: `Shelf ${i + 1}`,
-                description: game.messages.shelfDescription[0],
             }
             let collectionCount = 10;
             let shelfIndex = this.getGraphIndexByID(shelfID)
-            let testCollection = catalogue.collections[0];
-            let id = testCollection.id.replace(' ', '-').toLowerCase()
-            let collectionID = shelfID + '-' + id
+            let ids = []
             for (let j = 0; j < collectionCount; j++) {
-                game.graph[shelfIndex][id] = {node: collectionID}
+                let thisCollection = catalogue.collections[util.gri(0, 200)];
+                let id = util.sanitiseID(thisCollection.id)
+                let collectionID = shelfID + '-' + id
+                ids.push(id);
+
+                game.graph[shelfIndex][id] = { node: collectionID }
                 game.graph.push({
                     id: collectionID,
-                    back: {node: shelfID}
+                    back: { node: shelfID }
                 })
+
+                let childrenIds = []
+                let thisCollectionChildren = thisCollection.children;
+                for (let a = 0; a < thisCollectionChildren.length; a++) {
+                    let c = thisCollectionChildren[a];
+                    if (c.id) {
+                        let itemId = util.sanitiseID(c.id);
+                        childrenIds.push(itemId)
+                        let collectionIndex = this.getGraphIndexByID(collectionID)
+                        game.graph[collectionIndex][itemId] = { node: itemId }
+                        game.graph.push({
+                            id: itemId,
+                            back: { node: collectionID }
+                        })
+                        game.rooms[itemId] = {
+                            id: itemId,
+                            title: `${itemId}`,
+                            description: `${JSON.stringify(c)}`
+                        }
+                    }
+                }
                 game.rooms[collectionID] = {
                     id: collectionID,
                     title: id,
-                    description: `The filing card reads:/n${testCollection.details.Title} (${testCollection.details.Date})/n${testCollection.details.Description}`
+                    description: `The filing card reads:/n${thisCollection.details.Title} (${thisCollection.details.Date})./n Items contained within:/n ${childrenIds.join('/n')}`
                 }
             }
+
+            game.rooms[shelfID].description = `${game.messages.shelfDescription[0]} According to the label affixed to the side, it contains the following collections:/n ${ids.join('/n')}`;
         }
-        console.dir(game.graph)
         this.addOutput(this.getMessage('init'))
-        this.addOutput(this.getMessage('help'))
     }
 
     getNodeByID(id) {
@@ -152,6 +184,34 @@ export default class Game extends React.Component {
             return prevState
         })
     }
+    removeItemFromRoom(id) {
+        console.log(`Removing ${id}`)
+        for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
+            if (game.rooms[this.state.currentRoom].items[i].id === id) {
+                game.rooms[this.state.currentRoom].items.splice(i, 1)
+                return;
+            }
+            console.log(game.rooms[this.state.currentRoom].items[i])
+            if (game.rooms[this.state.currentRoom].items[i].visibleItems) {
+                for (let j = 0; j < game.rooms[this.state.currentRoom].items[i].visibleItems.length; j++) {
+                    if (game.rooms[this.state.currentRoom].items[i].visibleItems[j].id === id) {
+                        game.rooms[this.state.currentRoom].items[i].visibleItems.splice(j, 1)
+                        return;
+                    }
+                }
+            }
+
+            if (game.rooms[this.state.currentRoom].items[i].hiddenItems) {
+                for (let j = 0; j < game.rooms[this.state.currentRoom].items[i].hiddenItems.length; j++) {
+                    if (game.rooms[this.state.currentRoom].items[i].hiddenItems[j].id === id) {
+                        game.rooms[this.state.currentRoom].items[i].hiddenItems.splice(j, 1)
+                        return;
+                    }
+                }
+            }
+        }
+        return;
+    }
     handleChange(e) {
         this.setState({
             input: e.target.value
@@ -174,7 +234,10 @@ export default class Game extends React.Component {
             return prevState;
         }, () => {
             let outputEl = this.outputRef.current;
-            outputEl.scrollTop = outputEl.scrollHeight;
+            outputEl.scrollTo({
+                top: outputEl.scrollHeight,
+                behavior: 'smooth'
+            });
         })
     }
 
@@ -189,6 +252,16 @@ export default class Game extends React.Component {
         return word;
     }
 
+    resolveDescription(item) {
+        let d = item.description;
+        if (d.includes('$visibleItems')) {
+            let visibleItems = util.joinEnglish(item.visibleItems, 'listName')
+            d = d.replace('$visibleItems', visibleItems)
+        }
+
+        return d;
+    }
+
     getMessage(msg, insertWord = '') {
         if (game.messages[msg]) {
             let message = game.messages[msg][util.gri(0, game.messages[msg].length - 1)]
@@ -197,31 +270,41 @@ export default class Game extends React.Component {
         }
     }
 
-    handleInput() {
-        this.setState({ prevInput: this.state.input })
-        let s = this.state.input.replace('at ', '')
-        s = s.replace('through ', '')
-        s = s.replace('to ', '')
-        s = s.toLocaleLowerCase()
+    isDirectionValid(direction) {
+        if (this.getNodeByID(this.state.currentRoom)[direction]) {
+            return true
+        }
+        return false;
+    }
+
+    handleInput(s) {
+        if (!s) {
+            this.setState({ prevInput: this.state.input })
+            s = this.state.input.replace('at ', '')
+            s = s.replace('through ', '')
+            s = s.replace('to ', '')
+            s = s.toLocaleLowerCase()
+
+            this.setState(function (prevState) {
+                prevState.outputs.push('> ' + this.state.input);
+                return prevState;
+            })
+        }
         let command = []
         let words = s.split(' ');
         for (let i = 0; i < words.length; i++) {
             command.push(this.resolveSynonyms(words[i]))
         }
         console.log(command)
-        console.log(game)
         let verb = command[0];
         let noun = command[1];
         let currentNode = this.getNodeByID(this.state.currentRoom);
 
-        this.setState(function (prevState) {
-            prevState.outputs.push('> ' + this.state.input);
-            return prevState;
-        })
+
         this.setState({ input: '' })
         if (command.length === 1) {
             noun = this.resolveSynonyms(command[0])
-            if (noun === 'north' || noun === 'south' || noun === 'east' || noun === 'west' || noun === 'back') {
+            if (noun === 'north' || noun === 'south' || noun === 'east' || noun === 'west' || noun === 'back' || this.isDirectionValid(noun)) {
                 verb = 'go'
             } else if (noun === 'inventory') {
                 verb = 'examine'
@@ -236,8 +319,11 @@ export default class Game extends React.Component {
             }
             else if (noun === 'go') {
                 this.addOutput(this.getMessage('giveCompass'))
+                return;
             } else if (this.getItemByID(noun)) {
                 verb = 'examine'
+            } else if (noun === 'reset'){
+                window.location.reload()
             }
         }
         if (verb === 'use') {
@@ -276,7 +362,7 @@ export default class Game extends React.Component {
                     noun = `shelf-${command[2]}`
                 } else {
                     noun = `shelf-1`
-                    this.addOutput('(you walk up to the first shelf)')
+                    this.addOutput('(You walk up to Shelf 1)')
                 }
             }
 
@@ -302,6 +388,7 @@ export default class Game extends React.Component {
             let item = this.getItemByID(noun);
             if (item && item.canTake) {
                 this.addOutput('Taken.')
+                this.removeItemFromRoom(item.id)
                 this.addToInventory(item)
             } else if (item && !item.canTake) {
                 this.addOutput(this.getMessage('cantTakeThat'))
@@ -309,6 +396,18 @@ export default class Game extends React.Component {
                 this.addOutput(this.getMessage('noSuchThing'))
             }
         } else if (verb === 'examine') {
+
+            // if (noun === 'shelf') {
+            //     if (command[2]) {
+            //         this.handleInput(`go shelf-${command[2]}`)
+            //         return;
+            //     } else {
+            //         this.addOutput('(You walk up to the first shelf)')
+            //         this.handleInput(`go shelf-1`)
+            //         return;
+            //     }
+            // }
+
             if (noun === 'inventory') {
                 let list = this.state.inventory.map(function (item) {
                     return `— ${item.name}`
@@ -328,7 +427,7 @@ export default class Game extends React.Component {
             } else {
                 let item = this.getItemByID(noun)
                 if (item) {
-                    this.addOutput(item.description)
+                    this.addOutput(this.resolveDescription(item))
                 } else {
                     this.addOutput(this.getMessage('noSuchThing'))
                 }
@@ -352,6 +451,7 @@ export default class Game extends React.Component {
                 return prevState;
             })
             if (this.state.failedCommandCount > 2) {
+                this.addOutput(this.getMessage('didntUnderstand'))
                 this.addOutput(this.getMessage('hint'))
                 this.setState({ failedCommandCount: 0 })
             } else {
@@ -359,6 +459,10 @@ export default class Game extends React.Component {
             }
         }
 
+        this.setState((prevState) => {
+            prevState.moves++;
+            return prevState;
+        })
 
     }
 
@@ -374,7 +478,14 @@ export default class Game extends React.Component {
 
         return (
             <div className='game'>
-                <div className="game--status">{game.rooms[this.state.currentRoom].title}</div>
+                <header className='game--header'>
+                    <div className="game--status">
+                        {game.rooms[this.state.currentRoom].title}
+                    </div>
+                    <div className="game--status">
+                        Moves: {this.state.moves}
+                    </div>
+                </header>
                 <div className='game--output' ref={this.outputRef}>
                     <ul>
                         {outputItems}

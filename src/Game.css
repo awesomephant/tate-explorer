@@ -4,7 +4,7 @@ body {
 .game {
     --accent: rgb(255, 255, 255);
     --background: rgb(0, 0, 0);
-    --serif: "Untitled Serif", Times New Roman, serif;
+    --serif: "Untitled Sans Test", Times New Roman, serif;
     background: var(--background);
     height: 100vh;
     width: 100vw;
@@ -15,7 +15,6 @@ body {
     /* For TV display */
     width: calc(101vw);
     height: calc(100vh - 29px);
-    padding-top: 30px;
     padding-left: 20px;
 }
 .game--controls {
@@ -23,7 +22,7 @@ body {
     flex-basis: 2rem;
     
     /* For TV display */
-    width: calc(80vw);
+    width: 52rem;
     align-self: center;
     border: 1px solid white;
     border-radius: 4px;
@@ -50,9 +49,18 @@ body {
     text-decoration: underline;
 }
 
+.game--header {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    left: 0;
+}
 .game--status {
     padding: .1rem .5rem;
-    padding-top: .2rem;
+    top: 1rem;
     color: var(--background);
     text-transform: capitalize;
     font-size: 1.5rem;
@@ -62,13 +70,12 @@ body {
     display: inline-block;
     background: var(--accent);
     text-align: center;
-    transform-origin: center;
     border-radius: 1px;
+    margin: 1rem;
 }
 .game--output {
     flex-basis: 85%;
     color: var(--accent);
-    padding: 1rem;
     font-size: 1.7rem;
     line-height: 1.2;
     overflow-y: scroll;
@@ -83,7 +90,10 @@ body {
     list-style: none;
     transform-origin: left;
     margin-bottom: .5em;
-    /* transform: scaleX(.93); */
+    transform: scaleX(.8);
+    transform-origin: center;
+    max-width: 38em;
+    margin: 0 auto;
 }
 
 .game--output li p{
