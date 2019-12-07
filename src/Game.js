@@ -125,15 +125,26 @@ export default class Game extends React.Component {
                         }
                     }
                 }
+                let list = ids.map(function (id) {
+                    return `/n—${id}`
+                })
                 game.rooms[collectionID] = {
                     id: collectionID,
                     title: id,
-                    description: `The filing card reads:/n${thisCollection.details.Title} (${thisCollection.details.Date})./n Items contained within:/n ${childrenIds.join('/n')}`
+                    description: `The collection consists of ${thisCollection.details.Extent}. The catalogue entry reads:/n"${thisCollection.details.Title} (${thisCollection.details.Date})"./n Items contained within:${list.join('')}`
                 }
             }
 
-            game.rooms[shelfID].description = `${game.messages.shelfDescription[0]} According to the label affixed to the side, it contains the following collections:/n ${ids.join('/n')}`;
+            let list = ids.map(function (id) {
+                return `/n—${id}`
+            })
+
+            game.rooms[shelfID].description = `${game.messages.shelfDescription[0]} The label on the shelf tells you that it contains the following collections: ${list.join('')}`;
         }
+        this.addOutput('')
+        this.addOutput('')
+        this.addOutput('')
+        this.addOutput('')
         this.addOutput(this.getMessage('init'))
     }
 
@@ -396,17 +407,6 @@ export default class Game extends React.Component {
                 this.addOutput(this.getMessage('noSuchThing'))
             }
         } else if (verb === 'examine') {
-
-            // if (noun === 'shelf') {
-            //     if (command[2]) {
-            //         this.handleInput(`go shelf-${command[2]}`)
-            //         return;
-            //     } else {
-            //         this.addOutput('(You walk up to the first shelf)')
-            //         this.handleInput(`go shelf-1`)
-            //         return;
-            //     }
-            // }
 
             if (noun === 'inventory') {
                 let list = this.state.inventory.map(function (item) {

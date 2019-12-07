@@ -253,7 +253,7 @@
         },
         "store1": {
             "title": "Red Store",
-            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. Each shelf has a label and a circular handle attached to the side facing you. You hear a humming noise from the climate control system. A door to the West leads back to the corridor, further store rooms lie to the South.",
+            "description": "You're in a vast storage room lit by neon tubes. There is a row of 14 light-grey shelves mounted on steel tracks embedded into the floor. You hear a humming noise from the climate control system. A door to the West leads back to the corridor, further store rooms lie to the South.",
             "alternateTriggers": [
                 {
                     "term": "shelves",
@@ -267,6 +267,11 @@
                     "canTake": false,
                     "id": "shelves",
                     "description": "The shelves look heavy. To see what they contain, you'll have to walk closer to one."
+                },
+                {
+                    "canTake": false,
+                    "id": "floor",
+                    "description": "Unremarkable."
                 },
                 {
                     "canTake": false,
@@ -361,7 +366,7 @@
             "Remember you can type “help” to view a list of available commands. If you're stuck, maybe look at your surroundings by typing “look around”."
         ],
         "shelfDescription": [
-            "The shelf is made of sheet metal."
+            "The archive shelf towers over you. On its long steel racks, hundreds of cardboard boxes of various shapes are neatly arranged."
         ]
     },
     "synonyms": [
