@@ -106,9 +106,8 @@ export default class Game extends React.Component {
                 })
 
                 let childrenIds = []
-                let thisCollectionChildren = thisCollection.children;
-                for (let a = 0; a < thisCollectionChildren.length; a++) {
-                    let c = thisCollectionChildren[a];
+                for (let a = 0; a < thisCollection.children.length; a++) {
+                    let c = thisCollection.children[a];
                     if (c.id) {
                         let itemId = util.sanitiseID(c.id);
                         childrenIds.push(itemId)
@@ -118,14 +117,17 @@ export default class Game extends React.Component {
                             id: itemId,
                             back: { node: collectionID }
                         })
+
+                        let d = '';
+                        if (c.Description){d = c.Description}
                         game.rooms[itemId] = {
                             id: itemId,
                             title: `${itemId}`,
-                            description: `${JSON.stringify(c)}`
+                            description: `${c.Title}(${c.Date})/n${d}`
                         }
                     }
                 }
-                let list = ids.map(function (id) {
+                let list = childrenIds.map(function (id) {
                     return `/n—${id}`
                 })
                 game.rooms[collectionID] = {
@@ -293,7 +295,12 @@ export default class Game extends React.Component {
             this.setState({ prevInput: this.state.input })
             s = this.state.input.replace('at ', '')
             s = s.replace('through ', '')
+            s = s.replace('into ', '')
+            s = s.replace('in ', '')
             s = s.replace('to ', '')
+            s = s.replace('on ', '')
+            s = s.replace('onto ', '')
+            s = s.replace('the ', '')
             s = s.toLocaleLowerCase()
 
             this.setState(function (prevState) {
@@ -361,6 +368,15 @@ export default class Game extends React.Component {
                 return;
             } else {
                 this.addOutput(this.getMessage('noSuchThing'))
+                return;
+            }
+        }
+        if (verb === 'climb'){
+            if (this.state.currentRoom === 'store1' && noun === 'shelf'){
+                verb = 'go'
+                noun = 'up'
+            } else {
+                this.addOutput(this.getMessage('cantClimb'))
                 return;
             }
         }

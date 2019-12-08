@@ -1,10 +1,11 @@
 body {
     overflow: hidden;
+    background: black;
 }
 .game {
     --accent: rgb(255, 255, 255);
     --background: rgb(0, 0, 0);
-    --serif: "Untitled Sans Test", Times New Roman, serif;
+    --serif: "Untitled Sans Test", Arial, sans-serif;
     background: var(--background);
     height: 100vh;
     width: 100vw;
@@ -80,6 +81,7 @@ body {
     line-height: 1.2;
     overflow-y: scroll;
     padding-bottom: 7rem;
+    transform: skewX(-5deg);
 }
 .game--output ul {
     padding-bottom: 1rem;
