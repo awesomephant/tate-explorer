@@ -63,12 +63,12 @@
         {
             "id": "vent1",
             "down": {
-                "node": "store1"
+                "node": "onShelf"
+            },
+            "back": {
+                "node": "onShelf"
             },
             "forward": {
-                "node": "vent2"
-            },
-            "south": {
                 "node": "vent2"
             }
         },
@@ -150,12 +150,6 @@
             "description": "You are standing in a reading room. There are desks and chairs on soft carpeted floor, tall shelves line the walls. There is a door behind a counter to the North.",
             "items": [
                 {
-                    "canTake": true,
-                    "id": "leaflet",
-                    "name": "Leaflet",
-                    "description": "The leaflet reads: “Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.”"
-                },
-                {
                     "id": "desk",
                     "name": "Desk",
                     "canTake": false,
@@ -171,18 +165,26 @@
                     "id": "counter",
                     "name": "Counter",
                     "canTake": false,
-                    "description": "The counter is chest-high, with dark-grey linoleum sides and an oak top. Leaflets are stacked in one corner."
+                    "description": "The counter is chest-high, with dark-grey linoleum sides and an oak top. Leaflets are stacked in one corner.",
+                    "visibleItems": [
+                        {
+                            "canTake": true,
+                            "id": "leaflet",
+                            "name": "Leaflet",
+                            "description": "The leaflet reads: “Tate Archive collects and makes accessible a wealth of material primarily relating to the history of British art from 1900 to the present.”"
+                        }
+                    ]
                 },
                 {
                     "id": "shelves",
                     "name": "Shelves",
                     "canTake": false,
-                    "description": "The shelves reach from floor to ceiling. They are filled with green binders.",
+                    "description": "The shelves reach from floor to ceiling. They are filled with heavy binders.",
                     "visibleItems": [
                         {
                             "id": "binder",
                             "canTake": true,
-                            "description": "Its a green binder. The contents are useless.",
+                            "description": "The binder is bound in green leather and contains lists of archive records.",
                             "name": "Green Binder"
                         }
                     ]
@@ -218,6 +220,56 @@
             "items": [
                 {
                     "canTake": false,
+                    "id": "cabinet",
+                    "name": "Small Cabinet",
+                    "description": "The cabinet is made of light-grey sheet metal. The door is held shut by a small padlock.",
+                    "locked": true,
+                    "interactions": {
+                        "paperclip": {
+                            "message": "Even though you don't really know what you're doing, the lock eventually gives in to your attack. Inside the cabinet, you see more documents, loose papers, and next to a coffee cup, a small plastic card.",
+                            "action": "unlockCabinet"
+                        },
+                        "keys": {
+                            "message": "You try every key on your keychain, but none of them fit."
+                        }
+                    },
+                    "visibleItems": [
+                        {
+                            "id": "padlock",
+                            "canTake": false,
+                            "name": "Padlock",
+                            "description": "The small padlock does not look terribly secure. You may be able to open it with something other than a key."
+                        }
+                    ],
+                    "hiddenItems": [
+                        {
+                            "canTake": true,
+                            "id": "accesscard",
+                            "name": "Access Card (Level 2)",
+                            "description": "It's an access card. You don't recognise the name and face printed on it — whoever the card belongs to must have moved on long ago. The green stripe down one side tells you that this is a level-two card: Enough to get into some of the more sensitive areas of the building."
+                        },
+                        {
+                            "canTake": true,
+                            "id": "documents",
+                            "name": "Documents",
+                            "description": "There is nothing remarkable about these documents."
+                        },
+                        {
+                            "canTake": true,
+                            "id": "papers",
+                            "name": "Loose Papers",
+                            "description": "A4, mostly blank."
+                        },
+                        {
+                            "canTake": true,
+                            "id": "cup",
+                            "name": "Coffee Cup",
+                            "description": "\"World's No. 2 Archive\""
+                        }
+                    ]
+                },
+                {
+                    "canTake": false,
                     "id": "lights",
                     "name": "Lights",
                     "description": "The flourescent tubes exude cold light and a low electric hum."
@@ -226,8 +278,7 @@
                     "canTake": false,
                     "id": "desk",
                     "examined": false,
-                    "description": "Utilitarian. Scattered across the wooden surface you see $visibleItems.",
-                    "searchDescription": "You search the desk. After a little while, you find an access card under a stack of acquisition forms.",
+                    "description": "Utilitarian. Scattered across the wooden surface you see $visibleItems. Under the desk, a small cabinet is visible.",
                     "visibleItems": [
                         {
                             "canTake": false,
@@ -252,18 +303,17 @@
                         },
                         {
                             "canTake": true,
+                            "id": "paperclip",
+                            "name": "Paperclip",
+                            "listName": "some loose paperclips",
+                            "description": "Your standard, archive-grade paperclip. Very expensive."
+                        },
+                        {
+                            "canTake": true,
                             "id": "glove",
                             "name": "Blue rubber glove",
                             "listName": "a single blue rubber glove",
                             "description": "Thankfully, the glove looks unused."
-                        }
-                    ],
-                    "hiddenItems": [
-                        {
-                            "canTake": true,
-                            "id": "accesscard",
-                            "name": "Access Card (Level 2)",
-                            "description": "An access card similar to yours."
                         }
                     ]
                 },
@@ -310,7 +360,7 @@
         },
         "office": {
             "title": "Small Office",
-            "description": "hey its a office",
+            "description": "The office is crammed.",
             "alternateTriggers": [
                 {
                     "term": "shelves",
@@ -330,7 +380,40 @@
         "onShelf": {
             "title": "On top of the shelf",
             "description": "You've climbed to the top of the shelf. Surprisingly, there is barely any dust up here. Between the fluorecent tubes just above your head, you make out a hatch in the ceiling.",
-            "items": [],
+            "canClimb": true,
+            "items": [
+                {
+                    "id": "hatch",
+                    "name": "Hatch",
+                    "openMessage": "(You release the small bolt, and the hatch swings open.)",
+                    "description": "The hatch is painted white, matching the ceiling. ",
+                    "canTake": false
+                },
+                {
+                    "id": "floor",
+                    "name": "Floor",
+                    "description": "It's a long way down.",
+                    "canTake": false
+                },
+                {
+                    "id": "ceiling",
+                    "name": "Ceiling",
+                    "description": "There's nothing special about the ceiling.",
+                    "canTake": false
+                },
+                {
+                    "id": "shelf",
+                    "name": "Shelf",
+                    "description": "You're standing on it.",
+                    "canTake": false,
+                    "interactions": {
+                        "box": {
+                            "message": "You place the box on top of the shelf, right underneath the ceiling hatch.",
+                            "action": "dropBox"
+                        }
+                    }
+                }
+            ],
             "customTriggers": [
                 {
                     "verb": "open",
@@ -341,7 +424,7 @@
         },
         "vent1": {
             "title": "In the vents",
-            "description": "The ventilation tunnel is barely big enough to crawl through. It's pitch black. The quiet hum of the climate control system has grown to a roar. The vent extends to the South, behind you is the latch leading back down to the Red Store.",
+            "description": "The ventilation tunnel is barely big enough to crawl through. It's pitch black. The quiet hum of the climate control system has grown to a roar. The vent extends in front of you, behind you is the latch leading back down to the Red Store.",
             "items": []
         },
         "vent2": {
@@ -360,6 +443,7 @@
                     ]
                 }
             ],
+            "canClimb": true,
             "items": [
                 {
                     "canTake": false,
@@ -393,7 +477,7 @@
         },
         "quarantine": {
             "title": "Quarantine",
-            "description": "This is where boxes of archive material are checked for bugs and mould before we move them into permanent storage."
+            "description": "This is where boxes of archive material are checked for bugs and mold before they are moved them into permanent storage."
         },
         "corridor2": {
             "title": "South Corridor",
@@ -412,7 +496,7 @@
         },
         {
             "id": "keys",
-            "name": "Keys",
+            "name": "Keychain",
             "description": "They're your housekeys, probably of little use in the archive."
         }
     ],
@@ -448,8 +532,7 @@
             "You can't see any such thing."
         ],
         "locked": [
-            "It's locked.",
-            "The door is locked"
+            "It's locked."
         ],
         "searchFailed": [
             "You don't find anything."
@@ -464,11 +547,22 @@
         "giveTarget": [
             "You'll have to say what you want to use the % on."
         ],
+        "climbedBox": [
+            "(You step on top of the box.)"
+        ],
         "hint": [
             "Remember you can type “help” to view a list of available commands. If you're stuck, maybe look at your surroundings by typing “look around”."
         ],
         "shelfDescription": [
             "The archive shelf towers over you. On its long steel racks, hundreds of cardboard boxes of various shapes are neatly arranged."
+        ],
+        "cantBeOpened": [
+            "There's nothing for you to open there."
+        ],
+        "noSuchThingInInventory": [
+            "You don't have any such thing.",
+            "You're not carrying any such thing.",
+            "You don't have any such thing with you."
         ]
     },
     "synonyms": [
@@ -511,6 +605,13 @@
             ]
         },
         {
+            "term": "forward",
+            "match": [
+                "forwards",
+                "ahead"
+            ]
+        },
+        {
             "term": "inventory",
             "match": [
                 "i",
@@ -547,13 +648,23 @@
         {
             "term": "keys",
             "match": [
-                "key"
+                "key",
+                "keychain",
+                "housekeys"
             ]
         },
         {
             "term": "wall",
             "match": [
                 "walls"
+            ]
+        },
+        {
+            "term": "paperclip",
+            "match": [
+                "paperclips",
+                "clip",
+                "clips"
             ]
         },
         {

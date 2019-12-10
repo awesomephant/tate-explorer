@@ -13,11 +13,12 @@ export default class Game extends React.Component {
             input: '',
             prevInput: '',
             moves: 0,
-            currentRoom: 'store1',
+            currentRoom: 'corridor1',
             visitedRooms: [],
             outputs: [],
             failedCommandCount: 0,
-            inventory: game.initialInventory
+            inventory: game.initialInventory,
+            onBox: false
         }
 
         this.outputRef = React.createRef()
@@ -84,11 +85,13 @@ export default class Game extends React.Component {
             game.graph.push({
                 id: shelfID,
                 back: { node: 'store1' },
-                west: { node: 'corridor1' }
+                west: { node: 'corridor1' },
+                up: { node: 'onShelf' }
             })
             game.rooms[shelfID] = {
                 id: shelfID,
                 title: `Shelf ${i + 1}`,
+                canClimb: true
             }
             let collectionCount = 10;
             let shelfIndex = this.getGraphIndexByID(shelfID)
@@ -119,21 +122,54 @@ export default class Game extends React.Component {
                         })
 
                         let d = '';
-                        if (c.Description){d = c.Description}
+                        if (c.Description) { d = c.Description }
+
                         game.rooms[itemId] = {
                             id: itemId,
                             title: `${itemId}`,
-                            description: `${c.Title}(${c.Date})/n${d}`
+                            description: `${c.Title}(${c.Date})/n${d}`,
                         }
                     }
                 }
-                let list = childrenIds.map(function (id) {
+                let childrenList = childrenIds.map(function (id) {
                     return `/n—${id}`
                 })
+
+                let items = []
+                if (thisCollection.details.Extent) {
+                    if (thisCollection.details.Extent.toLowerCase().includes('box')) {
+                        items.push({
+                            canTake: true,
+                            id: "box",
+                            name: "Archival Box",
+                            description: "TODO its a box innit"
+                        })
+                    }
+
+                    if (thisCollection.details.Extent.toLowerCase().includes('file')) {
+                        items.push({
+                            canTake: true,
+                            id: "file",
+                            name: "Archival File",
+                            description: "TODO its a file innit"
+                        })
+                    }
+
+                    if (thisCollection.details.Extent.toLowerCase().includes('folder')) {
+                        items.push({
+                            canTake: true,
+                            id: "folder",
+                            name: "Archival Folder",
+                            description: "TODO its a foder innit"
+                        })
+                    }
+                }
+
                 game.rooms[collectionID] = {
                     id: collectionID,
                     title: id,
-                    description: `The collection consists of ${thisCollection.details.Extent}. The catalogue entry reads:/n"${thisCollection.details.Title} (${thisCollection.details.Date})"./n Items contained within:${list.join('')}`
+                    description: `The collection consists of ${thisCollection.details.Extent}. The catalogue entry reads:/n"${thisCollection.details.Title} (${thisCollection.details.Date})"./n Items contained within:${childrenList.join('')}`,
+                    items: items
                 }
             }
 
@@ -157,34 +193,39 @@ export default class Game extends React.Component {
         console.warn(`Couldn't find node with ID "${id}"`)
     }
 
-    getItemByID(id) {
+    getItemByID(id, includeRoom = true, includeInventory = true) {
         id = this.resolveAlternateTriggers(game.rooms[this.state.currentRoom], id)
-        for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
-            let item = game.rooms[this.state.currentRoom].items[i];
-            if (item.id === id) {
-                game.rooms[this.state.currentRoom].items[i].examined = true;
-                return item
-            }
-            if (item.examined && item.visibleItems) {
-                for (let j = 0; j < item.visibleItems.length; j++) {
-                    let vi = item.visibleItems[j];
-                    if (vi.id === id) {
-                        return vi;
+        if (includeRoom) {
+            for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
+                let item = game.rooms[this.state.currentRoom].items[i];
+                if (item.id === id) {
+                    game.rooms[this.state.currentRoom].items[i].examined = true;
+                    return item
+                }
+                if (item.examined && item.visibleItems) {
+                    for (let j = 0; j < item.visibleItems.length; j++) {
+                        let vi = item.visibleItems[j];
+                        if (vi.id === id) {
+                            return vi;
+                        }
                     }
                 }
-            }
-            if (item.searched && item.hiddenItems) {
-                for (let j = 0; j < item.hiddenItems.length; j++) {
-                    let hi = item.hiddenItems[j];
-                    if (hi.id === id) {
-                        return hi;
+                if (item.searched && item.hiddenItems) {
+                    for (let j = 0; j < item.hiddenItems.length; j++) {
+                        let hi = item.hiddenItems[j];
+                        if (hi.id === id) {
+                            return hi;
+                        }
                     }
                 }
             }
         }
-        for (let i = 0; i < this.state.inventory.length; i++) {
-            if (this.state.inventory[i].id === id) {
-                return this.state.inventory[i]
+        if (includeInventory) {
+
+            for (let i = 0; i < this.state.inventory.length; i++) {
+                if (this.state.inventory[i].id === id) {
+                    return this.state.inventory[i]
+                }
             }
         }
 
@@ -197,6 +238,25 @@ export default class Game extends React.Component {
             return prevState
         })
     }
+    removeItemFromInventory(itemID) {
+        for (let i = 0; i < this.state.inventory.length; i++) {
+            if (this.state.inventory[i].id === itemID) {
+                this.setState((prevState) => {
+                    prevState.inventory.splice(i, 1)
+                    return prevState;
+                })
+                return;
+            }
+        }
+    }
+
+    addItemToRoom(item, roomId) {
+        item.listSeperate = true;
+        item.canTake = true;
+        game.rooms[roomId].items.push(item);
+        console.log(game.rooms[roomId])
+    }
+
     removeItemFromRoom(id) {
         console.log(`Removing ${id}`)
         for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
@@ -232,7 +292,7 @@ export default class Game extends React.Component {
     }
 
     detectSubmit(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && this.state.input !== '') {
             this.handleInput()
         }
         if (e.keyCode === 38) {
@@ -315,8 +375,13 @@ export default class Game extends React.Component {
         }
         console.log(command)
         let verb = command[0];
-        let noun = command[1];
+        console.log(verb)
+        let noun = this.resolveSynonyms(command[1]);
         let currentNode = this.getNodeByID(this.state.currentRoom);
+
+        if (noun === 'hatch') {
+            verb = 'climb'
+        }
 
 
         this.setState({ input: '' })
@@ -340,21 +405,29 @@ export default class Game extends React.Component {
                 return;
             } else if (this.getItemByID(noun)) {
                 verb = 'examine'
-            } else if (noun === 'reset'){
+            } else if (noun === 'reset') {
                 window.location.reload()
             }
         }
         if (verb === 'use') {
             console.log('In use flow')
             let itemExists = this.getItemByID(noun)
-            console.log(itemExists)
-            if ((command[2] === 'with' || command[2] === 'on') && itemExists) {
-                let target = this.getItemByID(command[3]);
+            let target = this.getItemByID(command[2]);
+            if (target && itemExists) {
                 target = this.resolveSynonyms(target)
                 if (target && target.interactions && target.interactions[noun]) {
                     this.addOutput(target.interactions[noun].message);
                     //TODO: Make this dynamicly controlled from game.json
-                    game.graph = actions.unlockStoreDoor(game.graph);
+                    if (target.interactions[noun].action === 'unlockStoreDoor') {
+                        game.graph = actions.unlockStoreDoor(game.graph);
+                    } else if (target.interactions[noun].action === 'dropBox') {
+                        let item = this.getItemByID('box', false, true);
+                        this.addItemToRoom(item, this.state.currentRoom)
+                        this.removeItemFromInventory(item.id)
+                    } else if (target.interactions[noun].action === 'unlockCabinet'){
+                        game.rooms[this.state.currentRoom].items[0].locked = false;
+                        game.rooms[this.state.currentRoom].items[0].searched = true;
+                    }
                     return;
                 } else if (target) {
                     this.addOutput(this.getMessage('itemDidntWork'))
@@ -363,20 +436,57 @@ export default class Game extends React.Component {
                     this.addOutput(this.getMessage('noSuchThing'))
                     return;
                 }
-            } else if (itemExists) {
+            } else if (itemExists && command[2] === undefined) {
+                console.log(target)
                 this.addOutput(this.getMessage('giveTarget', command[1]))
                 return;
-            } else {
+            } else if (target === false) {
                 this.addOutput(this.getMessage('noSuchThing'))
                 return;
             }
         }
-        if (verb === 'climb'){
-            if (this.state.currentRoom === 'store1' && noun === 'shelf'){
+        if (verb === 'climb') {
+            if (game.rooms[this.state.currentRoom].canClimb && noun === 'shelf') {
                 verb = 'go'
                 noun = 'up'
+            } else if (noun === 'box' && this.getItemByID('box', true, false)) {
+                this.setState({ onBox: true })
+                this.addOutput(this.getMessage('climbedBox'))
+                return;
+            } else if (noun === 'hatch' && this.state.currentRoom === 'onShelf') {
+                if (this.state.onBox === true) {
+                    this.addOutput('(Standing on the box, you are able to reach the hatch. You open it, and pull yourself up inside.)')
+                    verb = 'go'
+                    noun = 'up'
+                } else {
+                    this.addOutput("The hatch is just out of reach from where you are. If you could find something to stand on...")
+                    return;
+                }
             } else {
                 this.addOutput(this.getMessage('cantClimb'))
+                return;
+            }
+        }
+
+        if (verb === 'open'){
+            let item = this.getItemByID(noun);
+            console.log(item)
+            if (item.locked === true){
+                this.addOutput(this.getMessage('locked'))
+            }
+            return;
+        }
+
+        if (verb === 'drop') {
+            let item = this.getItemByID(noun, false, true);
+            console.log(item)
+            if (item) {
+                this.addOutput('Dropped.')
+                this.addItemToRoom(item, this.state.currentRoom)
+                this.removeItemFromInventory(item.id)
+                return;
+            } else if (!item) {
+                this.addOutput(this.getMessage('noSuchThingInInventory'))
                 return;
             }
         }
@@ -412,6 +522,7 @@ export default class Game extends React.Component {
                 this.addOutput(this.getMessage('cantGoThatWay'))
             }
         } else if (verb === 'take') {
+            console.log(game.rooms[this.state.currentRoom])
             let item = this.getItemByID(noun);
             if (item && item.canTake) {
                 this.addOutput('Taken.')
@@ -423,7 +534,6 @@ export default class Game extends React.Component {
                 this.addOutput(this.getMessage('noSuchThing'))
             }
         } else if (verb === 'examine') {
-
             if (noun === 'inventory') {
                 let list = this.state.inventory.map(function (item) {
                     return `— ${item.name}`
@@ -434,21 +544,31 @@ export default class Game extends React.Component {
                     for (const item in list) {
                         s += `${list[item]}/n`
                     }
+                    s = s.substr(0, s.length - 2)
                     this.addOutput(s)
                 } else {
                     this.addOutput(`Your're not carrying anything.`)
                 }
             } else if (noun === 'around') {
-                this.addOutput(`${game.rooms[this.state.currentRoom].title}/n${game.rooms[this.state.currentRoom].description}`)
+                let droppedItems = ''
+                for (let i = 0; i < game.rooms[this.state.currentRoom].items.length; i++) {
+                    let item = game.rooms[this.state.currentRoom].items[i];
+                    if (item.listSeperate) {
+                        droppedItems += `There is a ${item.name.toLowerCase()} here./n`
+                    }
+                }
+
+                this.addOutput(`${game.rooms[this.state.currentRoom].title}/n${game.rooms[this.state.currentRoom].description}/n${droppedItems}`)
             } else {
                 let item = this.getItemByID(noun)
+                console.log(item)
                 if (item) {
                     this.addOutput(this.resolveDescription(item))
                 } else {
                     this.addOutput(this.getMessage('noSuchThing'))
                 }
             }
-        } else if (verb === 'search') {
+        } else if (verb === '___search') {
             let item = this.getItemByID(noun)
             if (item) {
                 if (item.hiddenItems) {
