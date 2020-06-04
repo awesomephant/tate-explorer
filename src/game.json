@@ -147,7 +147,7 @@
     "rooms": {
         "entrance": {
             "title": "Reading Room",
-            "description": "You are standing in a reading room. There are desks and chairs on soft carpeted floor, tall shelves line the walls. There is a door behind a counter to the North.",
+            "description": "You are standing in a small reading room. There are about a dozen heavy, leather-covered desks and chairs on soft carpeted floor, tall shelves line the walls. The lighting is mellow. There is a door behind a counter to the North.",
             "items": [
                 {
                     "id": "desk",
@@ -226,7 +226,7 @@
                     "locked": true,
                     "interactions": {
                         "paperclip": {
-                            "message": "Even though you don't really know what you're doing, the lock eventually gives in to your attack. Inside the cabinet, you see more documents, loose papers, and next to a coffee cup, a small plastic card.",
+                            "message": "Though you don't really know what you're doing, the lock eventually gives in to your attack. Inside the cabinet, you see more documents, loose papers, and next to a coffee cup, a small plastic card.",
                             "action": "unlockCabinet"
                         },
                         "keys": {
@@ -502,7 +502,7 @@
     ],
     "messages": {
         "init": [
-            "You awake in the reading room. /n /n Start by typing “look around”, or type “help” to show a list of available commands."
+            "░░░░░░░░░░░░░░░░░░░/n░ TATE ARCHIVE ADVENTURE ░/n░░░░░░░░░░░░░░░░░░░/n/nVersion 12.4, May 2020/nMax Kohler <maxkoehler.com>/n/n/n/n/n/nYou awake in the reading room. /n Type “help” to show a list of available commands."
         ],
         "help": [
             "You control your character by typing text commands into the box at the bottom of the screen, and hitting Enter on the keyboard. Most valid commands come in the form of “[verb]” or “[verb] [noun].” /n /n Nouns /n Most things in the game world can be referenced by their name. Type “look at [noun]” to get details about any given item you encounter. When you enter a new location, some objects may be hidden. Examine your surroundings to reveal them. /n/n Verbs /n Common verbs include “go”, “take”, “look”, “search”, and “use”, but additional verbs may become available in certain situations. /n/n Movement/n To move your character around the game world, type “go” followed by a compass direction. For instance, “go north” will move your character to the north. Read the descriptions of your surroundings closely to find out where you can go. /n/n Inventory /n You can pick up objects you encounter throughout the game by typing “take [noun]”. These will be added to your inventory. To see what you're carrying, type “inventory”. To use items on your inventory, type a command in the form “use [noun] on [noun]”, for instance: “use key on door”.  /n/n Other useful commands /n Type “reset” to start over, and “help” to display this message."

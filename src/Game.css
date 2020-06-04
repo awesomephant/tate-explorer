@@ -1,45 +1,41 @@
-body {
+@import url("https://use.typekit.net/vlg1sjx.css");
+  
+  body {
+      --accent: rgb(0, 0, 0);
+      --background: rgb(251, 251, 251);
     overflow: hidden;
-    background: black;
+    background: var(--background);
 }
 .game {
-    --accent: rgb(255, 255, 255);
-    --background: rgb(0, 0, 0);
-    --serif: "Untitled Sans Test", Arial, sans-serif;
+    --serif: "franklin-gothic-urw", Arial, sans-serif;
     background: var(--background);
     height: 100vh;
     width: 100vw;
     font-family: var(--serif);
     display: flex;
     flex-flow: column;
-    
-    /* For TV display */
-    width: calc(101vw);
-    height: calc(100vh - 29px);
-    padding-left: 20px;
+    font-size: 1.3rem;
+    letter-spacing: .012em;
+    max-width: 50rem;
+    margin: auto;
+
 }
 .game--controls {
     display: flex;
     flex-basis: 2rem;
-    
-    /* For TV display */
-    width: 52rem;
-    align-self: center;
-    border: 1px solid white;
-    border-radius: 4px;
-    transform: translateY(0%);
 }
 .controls--field {
     display: block;
-    flex-basis: 90%;
-    padding: .5rem 1rem;
-    border: 0;
     font-family: var(--serif);
     color: var(--accent);
     text-transform: lowercase;
-    font-size: 1.7rem;
+    font-size: inherit;
     background: transparent;
+    font-weight: 700;
+    border: 1px solid var(--accent);
+    padding: .5em;
 }
+
 .controls--button {
     flex-grow: 1;
     background: none;
@@ -65,10 +61,10 @@ body {
     color: var(--background);
     text-transform: capitalize;
     font-size: 1.5rem;
+    display: none;
     width: max-content;
     flex-shrink: 1;
     align-self: center;
-    display: inline-block;
     background: var(--accent);
     text-align: center;
     border-radius: 1px;
@@ -77,10 +73,11 @@ body {
 .game--output {
     flex-basis: 85%;
     color: var(--accent);
-    font-size: 1.7rem;
     line-height: 1.2;
     overflow-y: scroll;
     padding-bottom: 7rem;
+    padding-top: 7rem;
+    scrollbar-width: none;
 }
 .game--output ul {
     padding-bottom: 1rem;
@@ -91,13 +88,21 @@ body {
     list-style: none;
     transform-origin: left;
     margin-bottom: .5em;
-    transform: scaleX(.8);
     transform-origin: center;
     max-width: 38em;
     margin: 0 auto;
+    font-weight: 100;
+    
 }
 
+.game--output li[data-source="player"]{
+    font-weight: 600;
+    margin-top: 1em;
+}
 .game--output li p{
     display: block;
     min-height: 1em;
+ }
+ pre {
+     white-space: pre;
  }

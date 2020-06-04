@@ -13,7 +13,7 @@ export default class Game extends React.Component {
             input: '',
             prevInput: '',
             moves: 0,
-            currentRoom: 'corridor1',
+            currentRoom: 'entrance',
             visitedRooms: [],
             outputs: [],
             failedCommandCount: 0,
@@ -179,10 +179,6 @@ export default class Game extends React.Component {
 
             game.rooms[shelfID].description = `${game.messages.shelfDescription[0]} The label on the shelf tells you that it contains the following collections: ${list.join('')}`;
         }
-        this.addOutput('')
-        this.addOutput('')
-        this.addOutput('')
-        this.addOutput('')
         this.addOutput(this.getMessage('init'))
     }
 
@@ -302,8 +298,14 @@ export default class Game extends React.Component {
     }
 
     addOutput(msg) {
+
+        const fullMessage = {
+            text: msg,
+            source: 'game'
+        }
+
         this.setState(function (prevState) {
-            prevState.outputs.push(msg);
+            prevState.outputs.push(fullMessage);
             return prevState;
         }, () => {
             let outputEl = this.outputRef.current;
@@ -364,7 +366,7 @@ export default class Game extends React.Component {
             s = s.toLocaleLowerCase()
 
             this.setState(function (prevState) {
-                prevState.outputs.push('> ' + this.state.input);
+                prevState.outputs.push({text: this.state.input, source: "player"});
                 return prevState;
             })
         }
@@ -424,7 +426,7 @@ export default class Game extends React.Component {
                         let item = this.getItemByID('box', false, true);
                         this.addItemToRoom(item, this.state.currentRoom)
                         this.removeItemFromInventory(item.id)
-                    } else if (target.interactions[noun].action === 'unlockCabinet'){
+                    } else if (target.interactions[noun].action === 'unlockCabinet') {
                         game.rooms[this.state.currentRoom].items[0].locked = false;
                         game.rooms[this.state.currentRoom].items[0].searched = true;
                     }
@@ -468,10 +470,10 @@ export default class Game extends React.Component {
             }
         }
 
-        if (verb === 'open'){
+        if (verb === 'open') {
             let item = this.getItemByID(noun);
             console.log(item)
-            if (item.locked === true){
+            if (item.locked === true) {
                 this.addOutput(this.getMessage('locked'))
             }
             return;
@@ -605,11 +607,11 @@ export default class Game extends React.Component {
     render() {
 
         const outputItems = this.state.outputs.map(function (msg, index) {
-            let paragraphs = msg.split('/n');
+            let paragraphs = msg.text.split('/n');
             const ps = paragraphs.map(function (p, index) {
                 return <p>{p}</p>
             })
-            return <li key={index}>{ps}</li>
+            return <li key={index} data-source={msg.source}>{ps}</li>
         });
 
         return (
@@ -631,7 +633,6 @@ export default class Game extends React.Component {
                     <input ref={this.inputRef} onKeyPress={this.detectSubmit} value={this.state.input} onChange={this.handleChange} className='controls--field'></input>
                     <button onClick={this.handleInput} className='controls--button'>Enter</button>
                 </div>
-                {/* <Map graph={game.graph}></Map> */}
             </div>
 
         )
